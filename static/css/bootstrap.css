@@ -39,7 +39,6 @@
 *::after {
   box-sizing: border-box;
 }
-
 html {
   font-family: sans-serif;
   line-height: 1.15;
@@ -712,6 +711,7 @@ pre code {
 .order-7 {
   order: 7;
 }
+
 
 .order-8 {
   order: 8;
