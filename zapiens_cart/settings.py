@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'accounts',
     'store',
     'carts',
+    'admins',
 ]
 
 MIDDLEWARE = [
@@ -67,6 +69,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'category.context_processors.menu_links',
+                'carts.context_processors.counter',
             ],
         },
     },
@@ -129,7 +132,23 @@ STATICFILES_DIRS = [
 MEDIA_URL="/media/"
 MEDIA_ROOT=BASE_DIR / 'media'
 
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+}   
+
+# smtp configuration
+EMAIL_USE_TLS = True  
+EMAIL_HOST = 'smtp.gmail.com'  
+EMAIL_PORT = 587  
+EMAIL_HOST_USER = 'bibin6724@gmail.com'  
+EMAIL_HOST_PASSWORD = 'vczkraftwtvuezea'  
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+TWILIO_VERIFY_SERVICE_SID= 'VA88313bfd03b0f50cd6b5dc7e096bd883'
+TWILIO_ACCOUNT_SID= 'AC31562035eba41a95f754146956c1e531'
+TWILIO_AUTH_TOKEN= '77cba447ac065184afa003ff8e7bda64'
