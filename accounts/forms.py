@@ -54,3 +54,4 @@ class otploginForm(forms.Form):
     phone_number=forms.CharField(max_length=13,required=True,help_text='')
 class VerifyotpForm(forms.Form):
     code = forms.CharField(max_length=8, required=True, help_text='')
+

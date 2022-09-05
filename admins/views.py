@@ -4,10 +4,11 @@ from accounts.models import Account
 from django.contrib import messages,auth
 from django.contrib.auth.decorators import user_passes_test
 from django.http import JsonResponse
-from store.models import Product
+from store.models import Product,Variation
 from django.db.models import Q
 from category.models import Category
-from .forms import CategoryEditForm,ItemCreateForm
+from .forms import CategoryEditForm,ItemCreateForm,VariationForm
+
 
 # Create your views here.
 a=Account.objects.filter(is_superadmin=True)
@@ -216,6 +217,64 @@ def edit_product(request,id):
 
 
 #end edit product
+#variation management
+@user_passes_test(lambda u: u in a, login_url='admin_login')
+def manage_variation(request):
+    if 'q' in request.GET:
+        q = request.GET['q']
+        if q:
+            variation = Variation.objects.order_by('-id').filter(Q(product__name__icontains=q) | Q(variation_category__icontains=q) |Q(variation_value__icontains=q) )   
+            # users_count = users.count()
+            if not variation.exists():
+                messages.error(request, 'No Matching Datas Found')
+                return render(request,'admins/variation.html')
+        else:           
+            return redirect('manage_variation')
+    else:   
+        variation = Variation.objects.all().order_by('-product')
+
+    context = {
+
+        'variation' : variation,
+    }
+    return render(request, 'admins/variation.html',context)
+
+@user_passes_test(lambda u: u in a, login_url='admin_login')
+def add_variation(request):
+    form = VariationForm
+
+    if request.method == 'POST':
+        form = VariationForm(request.POST, request.FILES)
+        if form.is_valid():            
+            form.save()
+            return redirect('manage_variation')
+        
+    return render(request, 'admins/add_variation.html',{'form':form})
+
+@user_passes_test(lambda u: u in a, login_url='admin_login')
+def edit_variation(request,id):
+    variation = Variation.objects.get(id=id)
+    form = VariationForm(instance=variation)
+  
+    if request.method == 'POST':
+        form=VariationForm(request.POST,instance=variation)
+        if form.is_valid():
+            form.save()           
+            return redirect('manage_variation')
+   
+    context={
+        'form':form
+        }    
+    return render (request,'admins/add_variation.html',context)
+
+@user_passes_test(lambda u: u in a, login_url='admin_login')
+def delete_variation(request,id):
+    variation = Variation.objects.get(id=id)
+    variation.delete()
+    return redirect('manage_variation')
+
+
+#end variation management
 
 
 def admin_login(request):

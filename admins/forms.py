@@ -1,6 +1,6 @@
 from django import forms
 from category.models import Category
-from store.models import Product
+from store.models import Product,Variation
 
 
 
@@ -39,3 +39,16 @@ class ItemCreateForm(forms.ModelForm):
         
         self.fields['image'].widget.attrs.update({'class': 'form-control'})
 
+
+class VariationForm(forms.ModelForm):
+    class Meta:
+        model = Variation
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(VariationForm, self).__init__(*args, **kwargs)
+        self.fields['product'].widget.attrs.update({'class': 'form-control'})
+        self.fields['variation_category'].widget.attrs.update({'class': 'form-control'})
+        self.fields['variation_value'].widget.attrs.update({'class': 'form-control'})
+       
+      
