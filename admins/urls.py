@@ -23,5 +23,8 @@ urlpatterns = [
     path('add_variation/',views.add_variation,name='add_variation'),
     path('edit_variation/<int:id>/',views.edit_variation,name='edit_variation'),
     path('delete_variation/<int:id>/',views.delete_variation,name='delete_variation'),
+
+    path('manage_order/',views.manage_order,name='manage_order'),
+    path('edit_order/<int:id>/',views.edit_order,name='edit_order'),
     
 ]

@@ -8,6 +8,8 @@ from store.models import Product,Variation
 from django.db.models import Q
 from category.models import Category
 from .forms import CategoryEditForm,ItemCreateForm,VariationForm
+from orders.models import Order,OrderProduct,Payment
+from .forms import OrderForm
 
 
 # Create your views here.
@@ -304,3 +306,50 @@ def admin_logout(request):
     auth.logout(request)
     messages.success(request,'You were logged out')
     return redirect('admin_login')
+
+
+
+
+#manage order by admin
+@user_passes_test(lambda u: u in a, login_url='admin_login')
+def manage_order(request):
+    if 'q' in request.GET:
+        q = request.GET['q']
+        if q:
+            order = Order.objects.order_by('-id').filter(Q(user__first_name__icontains=q) | Q(order_number__icontains=q))  
+            order_product = OrderProduct.objects.all()
+            # users_count = users.count()
+            if not order.exists():
+             
+                return render(request,'admins/order.html')
+        else:           
+            return redirect('manage_order')
+    else:
+        order = Order.objects.all().order_by('-id')
+        order_product = OrderProduct.objects.all()
+    context = {
+        'order' : order,
+        'order_product' :  order_product,
+    }
+    return render(request, 'admins/order.html',context)
+
+
+
+@user_passes_test(lambda u: u in a, login_url='admin_login')
+def edit_order(request,id):
+    order = Order.objects.get(id=id)
+    form = OrderForm(instance=order)
+
+    if request.method == 'POST':
+        form=OrderForm(request.POST,instance=order)
+        
+        if form.is_valid():
+            form.save()                  
+            return redirect('manage_order')
+
+    context={
+        'form':form,       
+        }    
+    return render (request,'admins/edit_order.html',context)
+
+

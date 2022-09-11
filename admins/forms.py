@@ -1,6 +1,7 @@
 from django import forms
 from category.models import Category
 from store.models import Product,Variation
+from orders .models import Order
 
 
 
@@ -51,4 +52,12 @@ class VariationForm(forms.ModelForm):
         self.fields['variation_category'].widget.attrs.update({'class': 'form-control'})
         self.fields['variation_value'].widget.attrs.update({'class': 'form-control'})
        
-      
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['status',]
+
+    def __init__(self, *args, **kwargs):
+        super(OrderForm, self).__init__(*args, **kwargs)
+        self.fields['status'].widget.attrs.update({'class': 'form-control'})
+   
