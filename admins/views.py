@@ -10,6 +10,8 @@ from category.models import Category
 from .forms import CategoryEditForm,ItemCreateForm,VariationForm
 from orders.models import Order,OrderProduct,Payment
 from .forms import OrderForm
+from django.views.decorators.cache import never_cache
+from django.contrib.auth import authenticate
 
 
 # Create your views here.
@@ -198,24 +200,26 @@ def delete_product(request,id):
 #edit product
 
 @user_passes_test(lambda u: u in a, login_url='admin_login')
-def edit_product(request,id):
-    item = Product.objects.get(id=id)
-    form = ItemCreateForm(instance=item)
-    try:
-        if request.method == 'POST':
-            form=ItemCreateForm(request.POST,request.FILES, instance=item)
-            if form.is_valid():
-                form.save()           
-                return redirect('manage_product')
-    except:
-        messages.error(request, "Slug already exists.")
-        print("slug exists")
-        return redirect('edit_product')
 
-    context={
-        'form':form
-        }    
-    return render (request,'admins/add_product.html',context)
+def edit_product(request,id):
+    if request.user.is_authenticated:
+        item = Product.objects.get(id=id)
+        form = ItemCreateForm(instance=item)
+        try:
+            if request.method == 'POST':
+                form=ItemCreateForm(request.POST,request.FILES, instance=item)
+                if form.is_valid():
+                    form.save()           
+                    return redirect('manage_product')
+        except:
+            messages.error(request, "Slug already exists.")
+            print("slug exists")
+            return redirect('edit_product')
+
+        context={
+            'form':form
+            }    
+        return render (request,'admins/add_product.html',context)
 
 
 #end edit product
@@ -278,7 +282,7 @@ def delete_variation(request,id):
 
 #end variation management
 
-
+@never_cache
 def admin_login(request):
     if request.method == 'POST':
         email = request.POST['email']

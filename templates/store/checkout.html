@@ -2,7 +2,13 @@
 {% load static %}
 
 {% block content %}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<style>
+    form .error {
+        color: #ff0001;
+        }
+</style>
 
 <section class="section-content padding-y bg">
     <div class="container">
@@ -14,7 +20,7 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title mb-4" >Billing Address</h4>
-            <form action="{% url 'place_order' %}" method="POST">
+            <form action="{% url 'place_order' %}" method="POST" id="form">
                 {% csrf_token %}
                 <div class="form-row">
                    <div class="col form-group">
@@ -139,6 +145,22 @@
     
     </div> <!-- container .//  -->
     </section>
+    <script> jQuery('#form').validate({
+        rules: {
+          first_name: 'required',
+          email: 'required',
+          number: 'required',
+          password: 'required',
+        }, messages: {
+          first_name: 'Please enter valid name',
+          description: 'Please Enter Your description',
+          price: 'Please Enter price',
+          category: 'Please Enter valid category',
+        }, submitHandler: function (form) {
+          form.submit();
+        }
+      })
+    </script>
 
 {% endblock content %}
 

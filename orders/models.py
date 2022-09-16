@@ -18,11 +18,13 @@ class Payment(models.Model):
         return self.payment_id
 
 class Order(models.Model):
-    STATUS =(
-        ('New','New'),
-        ('Accepted','Accepted'),
-        ('Completed','Completed'),
-        ('Cancelled','Cancelled')
+    STATUS = (
+        ('New' ,'New' ),
+        ('Accepted', 'Accepted'),
+        ('Confirmed', 'Confirmed'),
+        ('Cancelled', 'Cancelled'),
+        ('Failed', 'Failed'),
+        ('Delivered', 'Delivered'),
     )
     user            =      models.ForeignKey(Account,on_delete=models.SET_NULL,null=True)
     payment         =      models.ForeignKey(Payment,on_delete=models.SET_NULL,blank=True,null=True)
@@ -46,10 +48,10 @@ class Order(models.Model):
     updated_at      =      models.DateTimeField(auto_now=True)
 
     def full_name(self):
-        return f"{self.first_name}{self.last_name}"
+        return f"{self.first_name }{self.last_name}"
     
     def full_address(self):
-        return f"{self.address_line_1 }{ self.address_line_2}"
+        return f"{self.address_line_1 } { self.address_line_2}"
 
 
 
@@ -57,6 +59,15 @@ class Order(models.Model):
         return self.first_name
 
 class OrderProduct(models.Model):
+    STATUS = (
+        ('New' ,'New' ),
+        ('Accepted', 'Accepted'),
+        ('Confirmed', 'Confirmed'),
+        ('Cancelled', 'Cancelled'),
+        ('Failed', 'Failed'),
+        ('Delivered', 'Delivered'),
+    )
+    
     order           =   models.ForeignKey(Order,on_delete=models.CASCADE)
     payment         =   models.ForeignKey(Payment,on_delete=models.SET_NULL,blank=True,null=True)
     user            =   models.ForeignKey(Account,on_delete=models.CASCADE)
@@ -67,6 +78,7 @@ class OrderProduct(models.Model):
     ordered         =   models.BooleanField(default=False)
     created_at      =   models.DateTimeField(auto_now_add=True)
     updated_at      =   models.DateTimeField(auto_now=True)
+    status          =   models.CharField(max_length=50,choices=STATUS,default='New')
 
     def __str__(self):
         return self.product.product_name

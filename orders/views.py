@@ -1,5 +1,6 @@
 
 import datetime
+from multiprocessing import context
 from urllib import request
 from django.shortcuts import render,redirect
 from carts.models import CartItem
@@ -12,6 +13,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.decorators import login_required
 
 import json
 import urllib
@@ -34,6 +36,7 @@ def payments(request):
 
     order.payment = payment
     order.is_ordered = True
+    order.status = 'Confirmed'
     order.save()
 
     # Move the cart items to Order Product table
@@ -131,6 +134,7 @@ def place_order(request,total=0,quantity=0):
             current_date        =   d.strftime('%Y%m%d')
             order_number        =   current_date  +str(data.id)
             data.order_number   =   order_number
+            
             data.save()
             request.session['order_number'] = order_number
 
@@ -170,11 +174,14 @@ def cod(request):
         messages.success(request, 'Your Order Placed Successfully!!')
         order_number = request.session['order_number']
         print(order_number)
-        order = Order.objects.filter(user=request.user, is_ordered=False, order_number=order_number)
-        
-        order.is_ordered = True
-        order.status = 'Confirmed'
-        
+        Order.objects.filter(user=request.user, is_ordered=False, order_number=order_number).update(is_ordered=True,status="Confirmed")
+        order = Order.objects.get(user=request.user, order_number=order_number)
+        # print(order)
+        # print(order.is_ordered)
+        # order.is_ordered = True
+        # print(order.is_ordered)
+        # order.status = 'Confirmed'
+        # order.save()        
         cart_items = CartItem.objects.filter(user = request.user)
         for x in cart_items:
             data = OrderProduct()
@@ -184,6 +191,7 @@ def cod(request):
             data.quantity = x.quantity                      
             data.product_price = x.product.price
             data.ordered = True
+            order.status = 'Confirmed'
             data.save()
 
 
@@ -233,3 +241,10 @@ def order_complete(request):
         return render(request, 'orders/order_complete.html', context)
     except (Payment.DoesNotExist, Order.DoesNotExist):
         return redirect('home')
+login_required(login_url='login')
+def my_orders(request):
+    orders=Order.objects.filter(user=request.user,is_ordered=True).order_by('-created_at')
+    context={
+        'orders':orders
+    }
+    return render(request,'accounts/my_orders.html',context)

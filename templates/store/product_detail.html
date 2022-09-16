@@ -2,6 +2,11 @@
 {% load static %}
 {% block content %}
 
+<style>
+    #img-container div {
+        z-index: 100;
+    }
+</style>
 
 <section class="section-content padding-y bg">
     <div class="container">
@@ -11,7 +16,7 @@
         <div class="row no-gutters">
             <aside class="col-md-6">
     <article class="gallery-wrap"> 
-        <div id="img-container"  style="width: 600px ">
+        <div id="img-container"  style="width: 600px">
             <img src="{{single_product.image.url}}" />
         <div> <!-- img-big-wrap.// -->
         

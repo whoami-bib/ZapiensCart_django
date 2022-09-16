@@ -154,3 +154,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TWILIO_VERIFY_SERVICE_SID= 'VA88313bfd03b0f50cd6b5dc7e096bd883'
 TWILIO_ACCOUNT_SID= 'AC31562035eba41a95f754146956c1e531'
 TWILIO_AUTH_TOKEN= '77cba447ac065184afa003ff8e7bda64'
+
+
+# razor pay payment integration
+
+razor_pay_key_id    =   'rzp_live_FsVrrzIsoUK844'
+key_secret          =   'CkML8yxlQw4BU4uj6YP1iCcU'

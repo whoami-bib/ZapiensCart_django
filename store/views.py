@@ -5,7 +5,7 @@ from tkinter import E
 from django.shortcuts import render,get_object_or_404
 from store.models import Product
 from category.models import Category
-from django.core.paginator import EmptyPage,PageNotAnInteger,Paginator
+from django.core.paginator import Paginator
 from django.db.models import Q
 # Create your views here.
 def store(request, category_slug=None):

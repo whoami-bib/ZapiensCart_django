@@ -24,11 +24,11 @@
                 <h5>Your order</h5>
                 <div class="checkout__order__product">
                     <ul>
-                        <li>
+                        <li class="list-group-item list-group-item-primary>
                             <span class="top__text">Product</span>
                             <span class="top__text__right">Total</span>
                         </li>{% for item in cart_items %}
-                        <li>{{ item.product.subcategory.name }} x {{item.quantity}}<span>₹ {{ item.sub_total }}</span></li>
+                        <li class=list-group-item list-group-item-primary>{{item.product.product_name}} x {{item.quantity}}=<span>₹ {{ item.sub_total }}</span></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -36,7 +36,7 @@
                     <ul>
                         <!-- <li>Subtotal <span>₹ {{total}}</span></li>
                         <li>Tax <span>₹ {{tax}}</span></li> -->
-                        <li>Amount to Pay <span>₹ {{display}}</span></li>
+                        <li class="list-group-item list-group-item-primary">Amount to Pay <span>₹ {{total}}</span></li>
                     </ul>
                 </div>
 

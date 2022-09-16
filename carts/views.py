@@ -2,6 +2,8 @@
 from multiprocessing.sharedctypes import Value
 from django.shortcuts import render,redirect
 from store.models import Product,Variation
+from orders.models import Order
+from orders.views import my_orders
 from .models import Cart,CartItem
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
@@ -215,3 +217,10 @@ def checkout(request,total=0,quantity=0,cart_item=None):
 
 
     return render(request,'store/checkout.html',context)
+
+def cancel_order(request,id):
+    print("__________________________________________________")
+    print(id)
+    Order.objects.filter(id=id).update(status="Cancelled")
+    return redirect(my_orders)
+
