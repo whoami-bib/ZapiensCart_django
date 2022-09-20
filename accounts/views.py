@@ -257,15 +257,40 @@ def activate(request,uidb64,token):
 def dashboard(request):
     orders=Order.objects.order_by("-created_at").filter(user_id=request.user.id,is_ordered=True)
     orders_count=orders.count
-    userprofile = UserProfile.objects.get(user_id=request.user.id)
+    userprofile = UserProfile.objects.filter(user_id=request.user.id)
     context={
         'orders_count':orders_count,
         'userprofile' : userprofile,
     }
     return render(request,'accounts/dashboard.html',context)
+
+# add address
+def add_address(request):
+    print("88888888888888888888888888888888888888")
+    if request.method =="POST":
+        user=request.user
+        print(user)
+        first_name=request.POST['first_name']
+        last_name=request.POST['last_name']
+        phone_number=request.POST['phone_number']
+        address_line_1=request.POST['address_line_1']
+        address_line_2=request.POST['address_line_2']
+        city = request.POST['city']
+        state=request.POST['state']
+        country=request.POST['country']
+        pincode=request.POST['pincode']
+        ins=UserProfile(user=request.user, address_line_1=address_line_1, 
+        address_line_2=address_line_2, city=city, state=state, country=country, pincode=pincode)
+        ins.save()
+
+    return render(request,'orders/add_address.html')
+# add address ends here
     
 def edit_profile(request):
-    userprofile = get_object_or_404(UserProfile,user=request.user)
+    print("______________________________________")
+    
+    userprofile = UserProfile.objects.get(user=request.user.id)
+       
     if request.method == "POST":
         user_form = UserForm(request.POST,instance=request.user)
         profile_form = UserProfileForm(request.POST,request.FILES,instance=userprofile)

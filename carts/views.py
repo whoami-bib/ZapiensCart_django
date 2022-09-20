@@ -4,6 +4,7 @@ from django.shortcuts import render,redirect
 from store.models import Product,Variation
 from orders.models import Order
 from orders.views import my_orders
+from accounts.models import UserProfile
 from .models import Cart,CartItem
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
@@ -189,6 +190,7 @@ def cart(request,total=0,quantity=0,cart_item=None):
     return render(request,'store/cart.html',context)
 @login_required(login_url='login')
 def checkout(request,total=0,quantity=0,cart_item=None):
+    user=UserProfile.objects.filter(user=request.user)
     try:
         tax=0
         grand_total=0
@@ -213,6 +215,7 @@ def checkout(request,total=0,quantity=0,cart_item=None):
         'cart_items':cart_items,
         'tax':tax,
         'grand_total':grand_total,
+        'user' : user
     }
 
 

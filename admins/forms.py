@@ -38,7 +38,7 @@ class ItemCreateForm(forms.ModelForm):
         
         self.fields['stock'].widget.attrs.update({'class': 'form-control'})       
         
-        self.fields['image'].widget.attrs.update({'class': 'form-control'})
+        self.fields['image'].widget.attrs.update({'class': 'form-control','id':'id_image1','name':'image', 'onchange':"changeImg(event)"})
 
 
 class VariationForm(forms.ModelForm):

@@ -158,5 +158,5 @@ TWILIO_AUTH_TOKEN= '77cba447ac065184afa003ff8e7bda64'
 
 # razor pay payment integration
 
-razor_pay_key_id    =   'rzp_live_FsVrrzIsoUK844'
-key_secret          =   'CkML8yxlQw4BU4uj6YP1iCcU'
+RAZORPAY_ID    =   'rzp_test_Nf4iy5nJpLvtmt'
+RAZORPAY_KEY   =   'Y2D6cZPsAz452WAVT8VpDTM1'

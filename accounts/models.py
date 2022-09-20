@@ -1,4 +1,6 @@
+from asyncio.windows_events import NULL
 import email
+from urllib import request
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
 # Create your models here.
@@ -65,11 +67,10 @@ class UserProfile(models.Model):
     user            =   models.OneToOneField(Account, on_delete=models.CASCADE)
     address_line_1  =   models.CharField(blank=True,max_length=100)
     address_line_2  =   models.CharField(blank=True,max_length=100)
-    profile_picture =   models.ImageField(blank=True,upload_to='userprofile')
-    city            =   models.CharField(max_length=20)
-    state           =   models.CharField(max_length=20)
-    country         =   models.CharField(max_length=20)
-    pincode         =   models.CharField(max_length=20)
+    city            =   models.CharField(blank=True,max_length=20 )
+    state           =   models.CharField(blank=True,max_length=20)
+    country         =   models.CharField(blank=True,max_length=20)
+    pincode         =   models.CharField(blank=True,max_length=20)
 
     def __str__(self):
         return self.user.first_name
