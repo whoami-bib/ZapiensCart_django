@@ -9,5 +9,6 @@ urlpatterns = [
     path('cod/',views.cod,name='cod'),
     path('order_complete/',views.order_complete,name='order_complete'),
     path('my_orders',views.my_orders,name="my_orders"),
+    path('couponremove/',views.couponremove,name='couponremove'),
     
 ]

@@ -10,6 +10,7 @@
 
  <!-- font-awesome -->
  <script src="https://kit.fontawesome.com/df00c4319e.js" crossorigin="anonymous"></script>
+ <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
 
   <!-- plugins:css -->
   <link rel="stylesheet" href="{% static 'admins/vendors/feather/feather.css' %}">
@@ -329,7 +330,7 @@
           </li>
      
          
-           {% comment %} <li class="nav-item nav-category">Offers and Discounts</li>
+          <li class="nav-item nav-category">Offers and Discounts</li>
             <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
               <i class="fa-solid fa-tags"></i>
@@ -342,14 +343,23 @@
                 <li class="nav-item"> <a class="nav-link" href="{% url 'add_discount' %}">Add Discount Coupon</a></li>
               </ul>
             </div>
-          </li> {% endcomment %}
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="http://bootstrapdash.com/demo/star-admin2-free/docs/documentation.html">
-              <i class="menu-icon mdi mdi-file-document"></i>
-              <span class="menu-title">Documentation</span>
+          </li> 
+
+          <li class="nav-item nav-category">Sales Report</li>
+            <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
+              <i class="fa-solid fa-tags"></i>
+              <span class="menu-title">&nbsp&nbsp&nbspReports</span>
+            
             </a>
-          </li> -->
-        </ul>
+            <div class="collapse" id="icons">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{% url 'sales_report' %}">Sales Report</a></li>
+                
+              </ul>
+            </div>
+          </li> 
+           
         
       </nav>
 
@@ -383,6 +393,98 @@
     <!-- endinject -->
     <!-- Custom js for this page-->
     <!-- End custom js for this page-->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+    <script src="
+  https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js
+      "></script>
+    <script src="
+  https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js
+      "></script>
+    <script src="
+  https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js
+      "></script>
+    <script src="
+  https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js
+      "></script>
+    <script src="
+  https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js
+      "></script>
+
+    
+    <style>
+      .buttons-copy{
+        background: aqua;
+        color: white;
+      }
+      .buttons-csv{
+        background: red;
+        color: white;
+        border-color: black;
+      }
+      .buttons-excel{
+        background:lime;
+        color: white;
+        border-color: black;
+        border-radius: 5%;
+        border: 5px;
+      }
+      .buttons-pdf{
+        background:orange;
+        color: white;
+        border-color: black;
+        border-radius: 5%;
+        border: 5px;
+      }
+      .buttons-print{
+        background:blue;
+        color: white;
+        border-color: black;
+        border-radius: 5%;
+        border: 5px;
+      }
+      .dataTables_filter{
+        float: right;
+        color: red;
+        font-weight: 500;
+      }
+      .paginate_button{
+        margin-right: 5px;
+      }
+    </style>
+
+    <script>
+      $(document).ready(function () {
+        // Setup - add a text input to each footer cell
+        $('#table tfoot th').each(function () {
+            var title = $(this).text();
+            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+        });
+     
+        // DataTable
+        var table = $('#table').DataTable({
+          dom: 'Bfrtip',
+          buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+          ],
+            initComplete: function () {
+                // Apply the search
+                this.api()
+                    .columns()
+                    .every(function () {
+                        var that = this;
+     
+                        $('input', this.footer()).on('keyup change clear', function () {
+                            if (that.search() !== this.value) {
+                                that.search(this.value).draw();
+                            }
+                        });
+                    });
+            },
+        });
+    });
+    </script>
   </body>
   
   </html>

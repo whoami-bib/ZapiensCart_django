@@ -8,10 +8,10 @@
         <div class="col-md-6 grid-margin stretch-card">
             <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Change Status</h4>
+                <h4 class="card-title">Discount Coupons</h4>
                 <!-- <p class="card-description">
                 Basic form layout
-                </p> -->{% if not order.status == "Cancelled" %}
+                </p> -->
                 <form action="" class="forms-sample" method="POST">
                     {% csrf_token %}
                    
@@ -19,11 +19,9 @@
                         {{ form.as_p }}
                    
                     
-                    <button type="submit" class="btn btn-primary me-2">Update</button> 
+                    <button type="submit" class="btn btn-primary me-2">Submit</button> 
               
                 </form>
-                {% endif %}
-                
                 {% if messages %}
                 {% for message in messages %}
                 {{ message }}

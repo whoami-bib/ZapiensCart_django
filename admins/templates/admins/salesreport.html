@@ -6,7 +6,7 @@
 <script type="text/javascript" src="//cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
+{% comment %} javascript for downloading table data {% endcomment %}
 
 
 
@@ -53,26 +53,19 @@
             <script>
               var ctx = document.getElementById('myChart1').getContext('2d');
               var myChart1 = new Chart(ctx, {
-                  type: 'doughnut',
+                  type: 'bar',
                   data: {
-                      labels: [{% for i in order %} '{{i.title}}', {% endfor %}],
+                      labels: [{% for i in monthly_sales %} '{{i.name}}', {% endfor %}],
               datasets: [{
-                  label: 'Number of Products',
-                  data: [{% for i in product %} {{ i.price }}, {% endfor %}],
+                  label: 'Monthly Sales',
+                  data: [{% for i in monthly_sales %} {{ i.value }}, {% endfor %}],
                   backgroundColor: [
                       'rgba(255, 99, 132, 1)',
                       'rgba(54, 162, 235, 1)',
                       'rgba(255, 206, 86, 1)',
                       'rgba(75, 192, 192, 1)',
                       'rgba(153, 102, 255, 1)',
-                      'rgba(255, 159, 64, 1)',
-                      'rgba(25, 26, 86, 1)',
-                      'rgba(255, 206, 86, 1)',
-                      'rgba(255, 208, 80, 2)',
-                      'rgba(255, 99, 132, 1)',
-                      'rgba(54, 162, 235, 1)',
-                      'rgba(255, 206, 86, 1)',
-                      'rgba(75, 192, 192, 1)',
+                      'rgba(255, 159, 64, 1)'
                   ],
                       borderColor: [
                           'rgba(255, 99, 132, 1)',
@@ -105,26 +98,15 @@
             <script>
               var ctx = document.getElementById('myChart2').getContext('2d');
               var myChart1 = new Chart(ctx, {
-                  type: 'bar',
+                  type: 'line',
                   data: {
-                      labels: [{% for i in product %} '{{i.title}}', {% endfor %}],
+                      labels: [{% for i in weekly_sales %} '{{i.name}}', {% endfor %}],
               datasets: [{
-                  label: 'Number of Products',
-                  data: [{% for i in product %} {{ i.price }}, {% endfor %}],
+                  label: 'weekly_sales',
+                  data: [{% for i in weekly_sales %} {{ i.value }}, {% endfor %}],
                   backgroundColor: [
                       'rgba(255, 99, 132, 1)',
-                      'rgba(54, 162, 235, 1)',
-                      'rgba(255, 206, 86, 1)',
-                      'rgba(75, 192, 192, 1)',
-                      'rgba(153, 102, 255, 1)',
-                      'rgba(245, 150, 64, 1)',
-                      'rgba(25, 26, 86, 1)',
-                      'rgba(255, 206, 86, 1)',
-                      'rgba(255, 208, 80, 2)',
-                      'rgba(255, 99, 132, 1)',
-                      'rgba(54, 162, 235, 1)',
-                      'rgba(255, 206, 86, 1)',
-                      'rgba(75, 192, 192, 1)',
+                      
                   ],
                       borderColor: [
                           'rgba(255, 99, 132, 1)',
@@ -157,55 +139,65 @@
                     Add class <code>.table-striped</code>
                   </p> -->
                   <div class="table-responsive">
-                    <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th>
-                            User
-                          </th>
-                          <th>
-                           Payment Id
-                          </th>
-                          
-                          <th>
-                            Product
-                          </th>
-                          <th>
-                            Date
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-
-                        {% for x in order %}
-                        <tr>
-                          <td class="py-1">
-                            {{ x.user.email }}
-                          </td>
-                          <td>
-                            {% if x.payment.payment_id %}
-                            {{ x.payment.payment_id }}
-                            {% else %}
-                            Not Paid
-                            {% endif %}
-                          
-                          <td>
-                            {{ x.product }}
-                          </td>
-                          <td>
-                           {{ x.created_at }}
-                          </td>
-                        </tr>
-                       {% endfor %}
                     
-                      </tbody>
-                    </table>
                   </div>
+
+                  <table class="table table-striped" id="table">
+                    <thead>
+                      <tr>
+                        <th>
+                          User
+                        </th>
+                        <th>
+                         Payment Id
+                        </th>
+                        
+                        <th>
+                          Product
+                        </th>
+                        <th>
+                          Date
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                      {% for x in order %}
+                      <tr>
+                        <td class="py-1">
+                          {{ x.user.email }}
+                        </td>
+                        <td>
+                          {% if x.payment.payment_id %}
+                          {{ x.payment.payment_id }}
+                          {% else %}
+                          Not Paid
+                          {% endif %}
+                        
+                        <td>
+                          {{ x.product }}
+                        </td>
+                        <td>
+                         {{ x.created_at }}
+                        </td>
+                      </tr>
+                     {% endfor %}
+                  
+                    </tbody>
+                    <tfoot>
+                      <th>search User</th>
+                      <th>Search Payment</th>
+                      <th>Search Product</th>
+                      <th>Search by Date</th>
+                    </tfoot>
+                  </table>
                 </div>
               </div>
             </div>
-          
           </div>
         </div>
+
+
+        
        
 {% endblock %}

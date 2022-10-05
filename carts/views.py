@@ -6,6 +6,7 @@ from orders.models import Order
 from orders.views import my_orders
 from accounts.models import UserProfile
 from .models import Cart,CartItem
+
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
@@ -161,6 +162,8 @@ def remove_cart_item(request,product_id,cart_item_id):
 
 
 def cart(request,total=0,quantity=0,cart_item=None):
+    request.session['coupon_offer'] = None
+    request.session['coupon_code'] = None
     try:
         tax=0
         grand_total=0
@@ -171,10 +174,11 @@ def cart(request,total=0,quantity=0,cart_item=None):
             cart=Cart.objects.get(cart_id=_cart_id(request))
             cart_items = CartItem.objects.filter(cart=cart,is_active=True)
         for cart_item in cart_items:
-            total+=(cart_item.product.price*cart_item.quantity)
+            total+=((cart_item.product.price-(cart_item.product.category.offer *cart_item.product.price)/100)*cart_item.quantity)
             quantity+=cart_item.quantity
         tax=(2 * total)/100
         grand_total=total + tax
+        request.session['grand_total']=grand_total
 
     except ObjectDoesNotExist:
         pass
@@ -201,7 +205,7 @@ def checkout(request,total=0,quantity=0,cart_item=None):
             cart=Cart.objects.get(cart_id=_cart_id(request))
             cart_items = CartItem.objects.filter(cart=cart,is_active=True)
         for cart_item in cart_items:
-            total+=(cart_item.product.price*cart_item.quantity)
+            total+=((cart_item.product.price-(cart_item.product.category.offer *cart_item.product.price)/100)*cart_item.quantity)
             quantity+=cart_item.quantity
         tax=(2 * total)/100
         grand_total=total + tax
@@ -222,8 +226,6 @@ def checkout(request,total=0,quantity=0,cart_item=None):
     return render(request,'store/checkout.html',context)
 
 def cancel_order(request,id):
-    print("__________________________________________________")
-    print(id)
     Order.objects.filter(id=id).update(status="Cancelled")
     return redirect(my_orders)
 

@@ -1,7 +1,7 @@
 from django import forms
 from category.models import Category
 from store.models import Product,Variation
-from orders .models import Order
+from orders .models import Order, Coupons
 
 
 
@@ -11,13 +11,14 @@ from orders .models import Order
 class CategoryEditForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields = ['category_name','slug','discription','cat_image',]
+        fields = ['category_name','slug','discription','cat_image','offer',]
     def __init__(self, *args, **kwargs):
         super(CategoryEditForm, self).__init__(*args, **kwargs)
         self.fields['category_name'].widget.attrs.update({'class': 'form-control'})
         self.fields['slug'].widget.attrs.update({'class': 'form-control'})
         self.fields['discription'].widget.attrs.update({'class': 'form-control'})
         self.fields['cat_image'].widget.attrs.update({'class': 'form-control'})
+        self.fields['offer'].widget.attrs.update({'class': 'form-control'})
 
 class ItemCreateForm(forms.ModelForm):
     class Meta:
@@ -61,3 +62,19 @@ class OrderForm(forms.ModelForm):
         super(OrderForm, self).__init__(*args, **kwargs)
         self.fields['status'].widget.attrs.update({'class': 'form-control'})
    
+
+class DiscountCouponForm(forms.ModelForm):
+    class Meta:
+        model = Coupons
+        fields = '__all__'
+    def __init__(self, *args, **kwargs):
+        super(DiscountCouponForm, self).__init__(*args, **kwargs)
+        self.fields['coupon_name'].widget.attrs.update({'class': 'form-control'})
+        self.fields['coupon_min'].widget.attrs.update({'class': 'form-control'})
+        self.fields['coupon_start'].widget.attrs.update({'class': 'form-control'})
+        self.fields['coupon_end'].widget.attrs.update({'class': 'form-control'})
+
+        self.fields['coupon_code'].widget.attrs.update({'class': 'form-control'})
+        self.fields['coupon_offer'].widget.attrs.update({'class': 'form-control'})
+        self.fields['coupon_start'].widget.attrs.update({'class': 'form-control'})
+        

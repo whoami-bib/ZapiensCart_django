@@ -7,40 +7,77 @@ from store.models import Product
 from category.models import Category
 from django.core.paginator import Paginator
 from django.db.models import Q
+from wishlists.models import Wishlist,WishlistItem
+
+from store.models import ProductGallery
+
 # Create your views here.
 def store(request, category_slug=None):
+    
     categories = None
     products = None
+    
 
     if category_slug != None:
         categories = get_object_or_404(Category, slug=category_slug)
         products = Product.objects.filter(category=categories, is_available=True)
-        paginator = Paginator(products, 1)
+        for single_product in products:
+            product_offer = single_product.price-((single_product.category.offer*single_product.price)/100 )
+        paginator = Paginator(products, 8)
         page = request.GET.get('page')
         paged_products = paginator.get_page(page)
         product_count = products.count()
     else:
         products = Product.objects.all().filter(is_available=True).order_by('id')
-        paginator = Paginator(products, 3)
+        product1=[]
+        for single_product in products:
+            
+            product1.append({
+                'id': single_product.id,
+                'product_name': single_product.product_name,  
+                'slug': single_product.slug,         
+                'descrbtion' :single_product.descrbtion,    
+                'price'  : single_product.price,       
+                'image'  :single_product.image,       
+                'stock'  : single_product.stock,       
+                'is_available' : single_product.is_available, 
+                'category'   :single_product.category,   
+                'created_date' :single_product.created_date, 
+                'modified_date':single_product.modified_date,
+                'offer': (single_product.price-(single_product.category.offer * single_product.price)/100),
+                 })
+        paginator = Paginator(product1, 8)
         page = request.GET.get('page')
         paged_products = paginator.get_page(page)
         product_count = products.count()
-
+    
     context = {
         'products': paged_products,
         'product_count': product_count,
     }
     return render(request, 'store/store.html', context)
 
-def product_detail(request,category_slug,product_slug):
+def product_detail(request,product_slug,category_slug):
     try:
         single_product=Product.objects.get(category__slug=category_slug,slug=product_slug)
+        #get the product gallery
+        product_gallery = ProductGallery.objects.filter(product_id=single_product.id)
+        
+
     except Exception as e:
         raise e
+    product_offer = single_product.price-((single_product.category.offer*single_product.price)/100 )   
+    wishlist = WishlistItem.objects.all()
     context={
-        'single_product':single_product
+        'single_product':single_product,
+        'product_offer':product_offer,
+        'product_gallery' :product_gallery,
+        'wishlist':wishlist,
     }
     return render(request,'store/product_detail.html',context)
+
+
+
 #search function
 
 def search(request):
@@ -53,4 +90,5 @@ def search(request):
                 'products':products,
                 'product_count' : product_count,
             }
+
     return render(request,'store/store.html',context)

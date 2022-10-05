@@ -21,10 +21,9 @@ class Payment(models.Model):
 class Order(models.Model):
     STATUS = (
         ('New' ,'New' ),
-        ('Accepted', 'Accepted'),
         ('Confirmed', 'Confirmed'),
         ('Cancelled', 'Cancelled'),
-        ('Failed', 'Failed'),
+        ('out for Delivery', 'Out for Delivery'),
         ('Delivered', 'Delivered'),
     )
     user            =      models.ForeignKey(Account,on_delete=models.SET_NULL,null=True)
@@ -83,3 +82,10 @@ class OrderProduct(models.Model):
 
     def __str__(self):
         return self.product.product_name
+class Coupons(models.Model):
+    coupon_name = models.CharField(max_length=250)
+    coupon_code = models.CharField(max_length=50)
+    coupon_offer = models.IntegerField(max_length=3)
+    coupon_min = models.IntegerField(max_length=50)
+    coupon_start = models.DateTimeField(default=None)
+    coupon_end = models.DateTimeField(default=None)

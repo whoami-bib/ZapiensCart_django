@@ -16,8 +16,8 @@
     <!-- ============================ COMPONENT 1 ================================= -->
     
     <div class="row">
-        <aside class="col-lg-6">
-    <div class="card">
+        <aside class="col-lg-5">
+    <div class="card ">
         <div class="card-body">
             <h4 class="card-title mb-4" >Billing Address</h4>
             <form action="{% url 'place_order' %}" method="POST" id="form">
@@ -25,7 +25,7 @@
                 <div class="form-group">
                     {% for i in user %}
                     
-                    <input type="radio" name="address" value="{{ i.id }}" id="">
+                    <input required type="radio" name="address" value="{{ i.id }}" id="">
                     <label class="form-group" for="">{{i.user.first_name }} {{i.user.last_name }} <br> {{i.address_line_1}} <br> {{i.address_line_2}} <br> {{i.city}} ,{{i.state}} ,{{i.country}} <br> {{i.pincode}}</label><br>
                     <a  href="{% url 'add_address' %}" class="btn btn-primary p-3">Add Address</a>
                     
@@ -37,23 +37,24 @@
     </div> <!-- card.// -->
     
         </aside> <!-- col.// -->
-        <aside class="col-lg-6">
+        <aside class="col-lg-7 ">
     
-            <div class="card">
+            <div class="card d-flex">
             <div class="card-body">
                 <table class="table table-borderless table-shopping-cart">
                     <thead class="text-muted">
                     <tr class="small text-uppercase">
                       <th scope="col">Product</th>
-                      <th scope="col" width="120">Quantity</th>
+                      <th scope="col" width="120" >Quantity</th>
                       <th scope="col" width="120">Price</th>
                       <th scope="col" class="text-right" width="200"> </th>
                     </tr>
                     </thead>
                     <tbody>
+                    
                     <tr>
                         {% for cart_item in cart_items %}
-                        <td>
+                        <td class="ms-3">
                             <figure class="itemside align-items-center">
                                 <div class="aside"><img src="{{ cart_item.product.image.url }}" class="img-sm"></div>
                                 <figcaption class="info">
@@ -69,7 +70,7 @@
                         </td>
                         <td> 
                             <!-- col.// -->
-                            <div class="price-wrap"> 
+                            <div class="price-wrap ml-5"> 
                                 <var class="price">{{cart_item.quantity}}</var> 
                                 
                             </div> 
@@ -77,7 +78,7 @@
                         </td>
                         <td> 
                             <div class="price-wrap"> 
-                                <var class="price">₹{{cart_item.sub_total}}</var> 
+                                <var class="price">₹{{grand_total}}</var> 
                                 <small class="text-muted"> ₹{{cart_item.product.price}} each </small> 
                             </div> <!-- price-wrap .// -->
                         </td>
@@ -85,8 +86,21 @@
                     </tr>
                     {% endfor %}
                     
+                    
                     </tbody>
                     </table>
+                    {% if request.session.coupon_code %}
+
+                    <label>Coupon-code : </label>
+                    <input type="text" class="form-control coupon col-lg-5" name="code" value="{{ request.session.coupon_code }}"  placeholder="{{ request.session.coupon_code }}"/>
+                          <a class="btn btn-info btn-apply coupon mt-2 mb-4" href="{% url 'couponremove' %}">Remove</a>
+                          {% else %}
+            
+                           <label>Coupon-code : </label>
+            
+                    <input type="text" class="form-control coupon " name="code"  />
+                          {% endif %}
+                    <button type="submit" class="btn btn-primary btn-apply coupon mt-2 mb-4" name="coupon" >Apply</button>
                 
                 <button type="submit" name="submit" class="btn btn-primary btn-block">Place Order </button>
                 <a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>

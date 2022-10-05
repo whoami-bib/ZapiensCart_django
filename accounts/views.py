@@ -14,7 +14,6 @@ from django.template.loader import render_to_string
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 from django.views.decorators.cache import never_cache
-#phone number verification
 from . import verify
 from .verify import send,check
 from carts.views import _cart_id
@@ -97,44 +96,6 @@ def verify_code(request):
         form = VerifyForm()
     return render(request, 'accounts/verify.html', {'form': form})
 
-# def register(request):
-#     if request.method == 'POST':
-#         form = RegistrationForm(request.POST)
-#         if form.is_valid():
-#             first_name = form.cleaned_data['first_name']
-#             last_name = form.cleaned_data['last_name']
-#             phone_number = form.cleaned_data['phone_number']
-#             email = form.cleaned_data['email']
-#             password = form.cleaned_data['password']
-#             username=email.split("@")[0]
-            
-#             user = Account.objects.create_user(first_name=first_name,last_name=last_name,email=email,username=username,password=password)
-#             user.phone_number =phone_number
-#             user.save()
-#             request.session['phone_number']=phone_number
-            
-#             #user Authentication
-
-#             current_site=get_current_site(request)
-#             mail_subject='Pleases Activate your Account'
-#             message = render_to_string('accounts/account_verification_email.html',{
-#                 'user'  : user,
-#                 'domain': current_site,
-#                 'uid'   : (user.pk),
-#                 'token' : default_token_generator.make_token(user),
-#             })
-#             to_email=email
-#             send_email=EmailMessage(mail_subject,message,to=[to_email])
-#             send_email.send()
-#             # messages.success(request,"thank u for registering with us we have sent an email to your account please verify it")
-#             return redirect('/accounts/login/?command=verification&email='+email)
-
-#     else:
-#         form=RegistrationForm()
-#     context={
-#         'form':form
-#     }
-#     return render(request,'accounts/register.html',context)
 @never_cache
 def login(request):
     if request.user.is_authenticated:
@@ -214,17 +175,6 @@ def otplogin(request):
                 messages.error(request,"Account Doesnot exist!")
         else:
             messages.error(request,"Enter a Valid Phone Number!")
-                
-
-        # if user is not None:
-        #         auth.login(request,user)
-        #         messages.success(request,'you are now logged in')
-        #         return redirect('home')
-        # else:
-        #     messages.error(request,'Invalid credentials')
-        #     return redirect('login')
-       
-        
     return render(request,'accounts/otp_login.html')
     
 
@@ -266,10 +216,8 @@ def dashboard(request):
 
 # add address
 def add_address(request):
-    print("88888888888888888888888888888888888888")
     if request.method =="POST":
         user=request.user
-        print(user)
         first_name=request.POST['first_name']
         last_name=request.POST['last_name']
         phone_number=request.POST['phone_number']
@@ -296,7 +244,6 @@ def edit_profile(request):
         profile_form = UserProfileForm(request.POST,request.FILES,instance=userprofile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-            print(user_form)
             profile_form.save()
             messages.success(request,'Your profile Updated.')
             return redirect('edit_profile')

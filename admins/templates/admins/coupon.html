@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <div>
                   <h4 class="card-title">All Categories</h4>
-                  <a style="text-decoration: none;"  href= "{% url 'add_category' %}"><i class="fa-solid fa-circle-plus"></i> Add New </a>
+                  <a style="text-decoration: none;" href= "{% url 'add_discount' %}"> <i class="fa-solid fa-circle-plus "></i><span> &nbsp&nbspAdd New </a>
                   <!-- <p class="card-description">
                     Add class <code>.table-striped</code>
                   </p> -->
@@ -28,14 +28,20 @@
                            Sl.no.
                           </th>
                           <th>
-                           Title
+                           Coupon Code
                           </th> 
                           <th>
-                            Slug
-                           </th> 
+                            Discount (*100%)
+                           </th>   
                            <th>
-                            offer
-                           </th>                    
+                            Start 
+                           </th>  
+                           <th>
+                            End
+                           </th>  
+                           <th>
+                            coupon Name
+                           </th>      
                           <th>
                             Actions
                           </th>
@@ -43,39 +49,39 @@
                       </thead>
                       <tbody>
                   
-                        {% for x in category %}
+                        {% for x in coupon %}
                         <tr>
                           <td class="py-1">
                             {{ forloop.counter }}
                             
                           </td>
                           <td>
-                            {{ x.category_name | capfirst}} 
+                            {{ x.coupon_code | capfirst}} 
                           </td>
                           <td>
-                            {{ x.slug}} 
+                            {{ x.coupon_offer }} 
                           </td>
                           <td>
-                            {{ x.offer}} 
+                            {{ x.coupon_start }} 
                           </td>
-                        
+                          <td>
+                            {{ x.coupon_end }} 
+                          </td>
+                          <td>
+                            {{ x.coupon_name }} 
+                          </td>
                            <td>
 
-                            <a href= "{% url 'edit_category' x.id %}"><i style="color:green" class="fa-solid fa-pen-to-square"></i> </a>
-                            <a href= "{% url 'delete_category' x.id %}" onclick="return confirm('Are you sure to delete '+' {{x.title}} ?')"><i style="color:red;margin-inline:50px;"  class="fa-solid fa-trash"></i></a>                                                                                                    
-                           
+                            <a href= "{% url 'edit_discount' x.id %}"><i style="color:green" class="fa-solid fa-pen-to-square"></i> </a>
+                            <a href= "{% url 'delete_discount' x.id %}" onclick="return confirm('Are you sure to delete '+' {{x.title}} ?')"><i style="color:red;margin-inline:50px;"  class="fa-solid fa-trash"></i></a>                                                                                                      
+                            
                            </td>
                         </tr>
                        {% endfor %}
                     
                       </tbody>
-                    </table>  {% if messages %}
-                    {% for message in messages %}
-                    {{ message }}
-                    {% endfor %}
-                    {% endif %}
+                    </table>
                   </div>
-                  
                 </div>
               </div>
             </div>
