@@ -1,26 +1,27 @@
 {% load static %}
 <header class="section-header bg-info ">
     <nav class="navbar p-md-0 navbar-expand-sm navbar-light border-bottom">
-    <div class="container">
+    {% comment %} <div class="container">
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTop4" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
+        
       </button>
       <div class="collapse navbar-collapse" id="navbarTop4">
         
         
-      </div> <!-- navbar-collapse .// -->
+      </div> <!-- navbar-collapse .// --> {% endcomment %}
     </div> <!-- container //  -->
     </nav>
     
     <section class="header-main border-bottom">
         <div class="container">
-    <div class="row align-items-center">
+    <div class="row align-items-center user-info">
         <div class="col-lg-2 col-md-3 col-6">
             <a href="{% url 'home' %}" class="brand-wrap">
                 <img class="logo" src="{% static './images/logo.png' %}">
             </a> <!-- brand-wrap.// -->
         </div>
-        <div class="col-lg col-sm col-md col-6 flex-grow-0">
+        <div class="col-lg col-sm col-md col-6 flex-grow-0 all-category-dropdown">
             <div class="category-wrap dropdown d-inline-block float-right">
                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> 
                     <i class="fa fa-bars"></i> All category 
@@ -33,8 +34,8 @@
                 </div>
             </div>  <!-- category-wrap.// -->
         </div> <!-- col.// -->
-        <a href="{% url 'store' %}" class="btn btn-outline-primary">Store</a>
-        <div class="col-lg  col-md-6 col-sm-12 col">
+        <a href="{% url 'store' %}" class="btn btn-outline-primary store-btn">Store</a>
+        <div class="col-lg  col-md-6 col-sm-12 col search-group">
             <form action="{% url 'search' %}" class="search" method="GET">
                 <div class="input-group w-100">
                     <input type="text" class="form-control" style="width:60%;" placeholder="Search" name="keyword">
@@ -47,18 +48,18 @@
                 </div>
             </form> <!-- search-wrap .end// -->
         </div> <!-- col.// -->
-        <div class="col-lg-3 col-sm-6 col-8 order-2 order-lg-3">
+        <div class="col-lg-4 col-sm-6 col-8 order-2 order-lg-3 user-info-control">
                     <div class="d-flex justify-content-end mb-3 mb-lg-0">
                         <div class="widget-header">
                             {% if user.id is None %}
-                            <small class="title text-white">Welcome guest!</small>
+                            <span class="title text-white">Welcome guest!</span>
                             <div> 
                                 <a href="{% url 'login' %}">Sign in</a> <span class="dark-transp"> | </span>
                                 <a href="{% url 'register' %}"> Register</a>
                             </div>
                         </div>
                         {% else %}
-                        <medium class="title text-white">Welcome {{user.first_name}}!</medium>
+                        <span class="title text-white">Welcome {{user.first_name}}!</span>
                         <div> 
                             <a href="{% url 'dashboard' %}">DashBoard</a> <span class="white-transp"> | </span>
                             <a href="{% url 'logout' %}">logout</a>
@@ -69,13 +70,48 @@
                             <div class="icon icon-sm rounded-circle border white"><i class="fa fa-shopping-cart"></i></div>
                             <span class="badge badge-pill badge-danger notify">{{ cart_count}}</span>
                         </a>
+                        <a href="{% url 'wishlist' %}" class="widget-header pl-3 ml-3">
+                            <div class="icon icon-sm rounded-circle border white"><i class="fa fa-heart"></i></div>
+                            <span class="badge badge-pill badge-danger notify">{{ wishlist_count}}</span>
+                        </a>
+                        
                     </div> <!-- widgets-wrap.// -->
-                </div> <!-- col.// -->
-    </div> <!-- row.// -->
-        </div> <!-- container.// -->
+            </div> <!-- col.// -->
+        </div> <!-- row.// -->
+    </div> <!-- container.// -->
     </section> <!-- header-main .// -->
-    
-    
-    
-    
     </header> <!-- section-header.// -->
+
+
+    <style>
+        @media only screen and (max-width: 780px) { 
+            .user-info {
+
+            }
+            .user-info-control {
+                font-size: 1rem;
+            }
+            .brand-wrap .logo {
+                width: 8rem;
+            }
+        }
+            @media only screen and (max-width: 780px) { 
+            .user-info {
+                display: flex;
+                justify-content: space-between;
+            }
+        }
+            @media only screen and (max-width: 900px) {
+            .user-info {}
+            /* hidden contents */
+            .all-category-dropdown {
+                display: none;
+            }
+            .store-btn {
+                display: none;
+            }
+            .search-group {
+                display: none;
+            }
+        }
+    </style>

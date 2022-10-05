@@ -96,11 +96,14 @@
                 <p class="text-center mb-3">
                     <img src="{% static './images/misc/payments.png' %}" height="26">
                 </p>
-                <a href="{% url 'cod' %}" class="btn btn-primary btn-block mb-3">Pay On Delivery</a>
+                <a href="{% url 'cod' %}" class="btn btn-primary btn-block mb-3">Cash On Delivery</a>
+                <a id="rzp-button1" href=" {% url 'payment' %}"
+                                class="btn btn-success btn-order btn-block mb-3">Razorpay</a>
                 <div id="paypal-button-container">
                   {% comment %} paypal Button  {% endcomment %}
                  
                 </div>
+                
                 
 
             </div> <!-- card-body.// -->
@@ -193,8 +196,16 @@
       }).render('#paypal-button-container');
 
     </script>
+
+
+
+
+    
+
+
+
+
 {% endblock content %}
 
 
 
- 

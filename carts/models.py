@@ -1,4 +1,5 @@
 
+from itertools import product
 from tkinter import CASCADE
 from django.db import models
 from store.models import Product,Variation
@@ -15,6 +16,7 @@ class Cart(models.Model):
     def __str__(self):
         return self.cart_id
 
+
 class CartItem(models.Model):
     user= models.ForeignKey(Account,on_delete=models.CASCADE,null=True)
     variations=models.ManyToManyField(Variation,blank=True)
@@ -24,7 +26,7 @@ class CartItem(models.Model):
     is_active=models.BooleanField(default=True)
 
     def sub_total(self):
-        return self.product.price * self.quantity
-
+        return (self.product.price -(self.product.category.offer*self.product.price)/100) * self.quantity 
     def __unicode__(self):
         return self.product
+

@@ -1,3 +1,4 @@
+from calendar import month
 from multiprocessing import context
 from django.shortcuts import render,redirect
 from accounts.models import Account
@@ -8,8 +9,12 @@ from store.models import Product,Variation
 from django.db.models import Q
 from category.models import Category
 from .forms import CategoryEditForm,ItemCreateForm,VariationForm
-from orders.models import Order,OrderProduct,Payment
-from .forms import OrderForm
+from orders.models import Order,OrderProduct,Payment,Coupons
+from .forms import OrderForm,DiscountCouponForm
+from django.views.decorators.cache import never_cache
+from django.contrib.auth import authenticate
+from django.utils import timezone
+import datetime
 
 
 # Create your views here.
@@ -20,10 +25,15 @@ a=Account.objects.filter(is_superadmin=True)
 def admin_tab(request):
     customer_count = Account.objects.filter(is_superadmin=False).count()
     item_count = Product.objects.all().count()
-
+    product = Product.objects.all()
+    order = OrderProduct.objects.all()
+    order_count =OrderProduct.objects.all().count()
     context = {
         'customer_count':customer_count,
-        'item_count':item_count
+        'item_count':item_count,
+        'product':product,
+        'order':order,
+        'order_count':order_count
     }
     return render(request, 'admins/tables.html',context)
 
@@ -175,7 +185,6 @@ def add_product(request):
         if request.method == 'POST':
             form = ItemCreateForm(request.POST, request.FILES)
             if form.is_valid():
-                print("yes")
                 form.save()
                 return redirect('manage_product')
            
@@ -198,24 +207,25 @@ def delete_product(request,id):
 #edit product
 
 @user_passes_test(lambda u: u in a, login_url='admin_login')
-def edit_product(request,id):
-    item = Product.objects.get(id=id)
-    form = ItemCreateForm(instance=item)
-    try:
-        if request.method == 'POST':
-            form=ItemCreateForm(request.POST,request.FILES, instance=item)
-            if form.is_valid():
-                form.save()           
-                return redirect('manage_product')
-    except:
-        messages.error(request, "Slug already exists.")
-        print("slug exists")
-        return redirect('edit_product')
 
-    context={
-        'form':form
-        }    
-    return render (request,'admins/add_product.html',context)
+def edit_product(request,id):
+    if request.user.is_authenticated:
+        item = Product.objects.get(id=id)
+        form = ItemCreateForm(instance=item)
+        try:
+            if request.method == 'POST':
+                form=ItemCreateForm(request.POST,request.FILES, instance=item)
+                if form.is_valid():
+                    form.save()           
+                    return redirect('manage_product')
+        except:
+            messages.error(request, "Slug already exists.")
+            return redirect('edit_product')
+
+        context={
+            'form':form
+            }    
+        return render (request,'admins/add_product.html',context)
 
 
 #end edit product
@@ -278,7 +288,7 @@ def delete_variation(request,id):
 
 #end variation management
 
-
+@never_cache
 def admin_login(request):
     if request.method == 'POST':
         email = request.POST['email']
@@ -348,8 +358,139 @@ def edit_order(request,id):
             return redirect('manage_order')
 
     context={
-        'form':form,       
+        'form':form, 
+        'order':order      
         }    
     return render (request,'admins/edit_order.html',context)
 
+# Discount coupons
 
+@user_passes_test(lambda u: u in a, login_url='admin_login')
+def manage_discount(request):
+    if 'q' in request.GET:
+        q = request.GET['q']
+        if q:
+            coupon = Coupons.objects.order_by('-id').filter(Q(coupon_code__icontains=q)  )   
+            # users_count = users.count()
+            if not coupon.exists():
+                messages.error(request, 'No Matching Datas Found')
+                return render(request,'admins/coupon.html')
+        else:           
+            return redirect('manage_discount')
+    else:
+        coupon = Coupons.objects.all().order_by('-id')
+
+    context = {
+        'coupon' : coupon,
+    }
+    return render(request, 'admins/coupon.html',context)
+
+def add_discount(request):
+    form = DiscountCouponForm
+   
+    if request.method == 'POST':
+        form = DiscountCouponForm(request.POST)
+        if form.is_valid():
+            
+            form.save()
+            return redirect('manage_discount')
+        
+    return render(request, 'admins/add_discount.html',{'form':form})
+
+def delete_discount(request,id):
+    discount = Coupons.objects.get(id=id)
+    discount.delete()
+    return redirect('manage_discount')
+
+@user_passes_test(lambda u: u in a, login_url='admin_login')
+def edit_discount(request,id):
+    discount = Coupons.objects.get(id=id)
+    form = DiscountCouponForm(instance=discount)
+
+    if request.method == 'POST':
+        form=DiscountCouponForm(request.POST,instance=discount)
+        if form.is_valid():
+            form.save()           
+            return redirect('manage_discount')
+
+
+    context={
+        'form':form
+        }    
+    return render (request,'admins/add_discount.html',context)
+    # sales report
+
+def sales_report(request):
+    customer_count = Account.objects.filter(is_superadmin=False).count()
+    item_count = Product.objects.all().count()
+    product = Product.objects.all()
+    order = OrderProduct.objects.all()
+    order_count =OrderProduct.objects.all().count()
+    ymax = timezone.now()
+    ymin = (timezone.now() - datetime.timedelta(days=365))
+    yearly = OrderProduct.objects.filter(created_at__lte=ymax, created_at__gte=ymin)
+    mmax = timezone.now()
+    mmin = (timezone.now() - datetime.timedelta(days=30))
+    monthly = OrderProduct.objects.filter(created_at__lte=mmax, created_at__gte=mmin)
+    ymax = timezone.now()
+    ymin = (timezone.now() - datetime.timedelta(days=7))
+    weekly = OrderProduct.objects.filter(created_at__lte=ymax, created_at__gte=ymin)
+    month_sale = ["","","","","","","",""]
+    subm = timezone.now()
+
+
+    week_number = 4
+
+    for i in range(4):
+        k = 0
+        for i in monthly:
+            if i.created_at <= subm and i.created_at >= (subm - datetime.timedelta(days=7)):
+                k += 1
+
+        month_sale.append({'name': 'week' + str(week_number), 'value': k})
+        week_number -= 1
+        subm = subm - datetime.timedelta(days=7)
+
+    subw = timezone.now()
+    n=7
+    week_sale=["","","","",""]
+    for i in range(7):
+        k = 0
+        for i in weekly:
+            if i.created_at <= subw and i.created_at>=(subw - datetime.timedelta(days=1)):
+                k += 1
+        week_sale.append({'name':'day'+str(n), 'value':k})
+        n -= 1
+        subw = subw - datetime.timedelta(days=1)
+
+    monthly_sales = list(reversed(month_sale))
+
+    suby=timezone.now()
+    months=11
+    year_sale=[]
+    months_available=['january',"February","March","April","May","June","July","August","September","October","November","December"]
+    for j in range(12):
+        l=0
+        for j in yearly:
+            if j.created_at <=suby and j.created_at >=(suby - datetime.timedelta(days=30)):
+                l +=1
+        year_sale.append({"name" : months_available[months],'value':l})
+        suby = suby- datetime.timedelta(days=30)
+        months -= 1
+    yearly_sale = list(reversed(year_sale))
+    
+    weekly_sales = list(reversed(week_sale))
+    context={
+      'monthly': monthly, 
+    'yearly': yearly, 
+    'monthly_sales': monthly_sales,
+     'weekly_sales': weekly_sales,
+     'customer_count':customer_count,
+        'item_count':item_count,
+        'product':product,
+        'order':order,
+        'order_count':order_count,
+        # 'packed':zip(weekly_sales,monthly_sales,yearly_sale)
+     }
+
+    return render(request, 'admins/salesreport.html',context)
