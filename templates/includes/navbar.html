@@ -16,7 +16,7 @@
     <section class="header-main border-bottom">
         <div class="container">
     <div class="row align-items-center user-info">
-        <div class="col-lg-2 col-md-3 col-6">
+        <div class="col-lg-2 col-md-3">
             <a href="{% url 'home' %}" class="brand-wrap">
                 <img class="logo" src="{% static './images/logo.png' %}">
             </a> <!-- brand-wrap.// -->
@@ -48,30 +48,30 @@
                 </div>
             </form> <!-- search-wrap .end// -->
         </div> <!-- col.// -->
-        <div class="col-lg-4 col-sm-6 col-8 order-2 order-lg-3 user-info-control">
+        <div class="col-lg-4 col-sm-6 order-2 order-lg-3 user-info-control">
                     <div class="d-flex justify-content-end mb-3 mb-lg-0">
                         <div class="widget-header">
                             {% if user.id is None %}
-                            <span class="title text-white">Welcome guest!</span>
+                            <span class="title text-white loged-in-info">Welcome guest!</span>
                             <div> 
-                                <a href="{% url 'login' %}">Sign in</a> <span class="dark-transp"> | </span>
-                                <a href="{% url 'register' %}"> Register</a>
+                                <a href="{% url 'login' %}">Sign in</a> <span class="dark-transp loged-in-info"> | </span>
+                                <a href="{% url 'register' %}" class="loged-in-info"> Register</a>
                             </div>
                         </div>
                         {% else %}
-                        <span class="title text-white">Welcome {{user.first_name}}!</span>
-                        <div> 
+                        <span class="title text-white loged-in-info">Welcome {{user.first_name}}!</span>
+                        <div class="d-flex loged-in-info"> 
                             <a href="{% url 'dashboard' %}">DashBoard</a> <span class="white-transp"> | </span>
                             <a href="{% url 'logout' %}">logout</a>
                         </div>
                     </div>
                         {% endif %}
-                        <a href="{% url 'cart' %}" class="widget-header pl-3 ml-3">
-                            <div class="icon icon-sm rounded-circle border white"><i class="fa fa-shopping-cart"></i></div>
+                        <a href="{% url 'cart' %}" class="widget-header pl-3 ml-3 icons-img">
+                            <i class="fa  fa-shopping-cart icons"></i>
                             <span class="badge badge-pill badge-danger notify">{{ cart_count}}</span>
                         </a>
-                        <a href="{% url 'wishlist' %}" class="widget-header pl-3 ml-3">
-                            <div class="icon icon-sm rounded-circle border white"><i class="fa fa-heart"></i></div>
+                        <a href="{% url 'wishlist' %}" class="widget-header pl-3 ml-3 icons-img">
+                            <i class="fa fa-heart icons"></i>
                             <span class="badge badge-pill badge-danger notify">{{ wishlist_count}}</span>
                         </a>
                         
@@ -84,9 +84,38 @@
 
 
     <style>
+        @media only screen and (max-width: 500px) {
+            .user-info a img {
+                width: 1rem;
+
+            }
+        }
+        @media only screen and (max-width: 780px) {
+            .user-info > div{
+                width: fit-content;
+            }
+            .icons-img {
+                display: flex;
+                align-items: center;
+            }
+                {% comment %} !important {% endcomment %}
+        }
+        @media only screen and (max-width: 780px) {
+            .loged-in-info {
+                font-size: small;
+                font-weight: 600;
+            }
+            .icons-img {
+
+            }
+            .icons-img div i {
+                height: 0.2rem;
+            }
+        }
         @media only screen and (max-width: 780px) { 
             .user-info {
-
+                display: flex;
+                justify-content: space-between;
             }
             .user-info-control {
                 font-size: 1rem;
@@ -95,13 +124,7 @@
                 width: 8rem;
             }
         }
-            @media only screen and (max-width: 780px) { 
-            .user-info {
-                display: flex;
-                justify-content: space-between;
-            }
-        }
-            @media only screen and (max-width: 900px) {
+        @media only screen and (max-width: 900px) {
             .user-info {}
             /* hidden contents */
             .all-category-dropdown {
@@ -114,4 +137,22 @@
                 display: none;
             }
         }
+        .icons-img {
+            display: flex;
+            align-items: center;
+        }
     </style>
+
+    <script>
+        (() => {
+            const winWidth = window.screen.width
+            const icons = document.getElementsByClassName("icons")
+            if(winWidth > 990) {
+                console.log(icons)
+                for(let icon of icons) {
+                    console.log(icon)
+                    icon.classList.add('icon-sm')
+                }
+            }
+        })()
+    </script>
