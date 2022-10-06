@@ -10,6 +10,7 @@ class Category(models.Model):
     slug            = models.SlugField(max_length=100,unique=True)
     discription     = models.TextField(max_length=200,blank=True)
     cat_image       =models.ImageField(upload_to='photos/categories')
+    offer           = models.PositiveIntegerField(default=0)
 
     class meta:
         verbose_name         = 'category'

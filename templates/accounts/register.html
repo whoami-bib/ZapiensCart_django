@@ -1,11 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+<style>
+  form .error {
+      color: #ff0001;
+      }
+</style>
 <section class="section-content padding-y ">
         <div class="card mx-auto bg-dark" style="max-width:520px; margin-top:40px;">
           <article class="card-body">
             {% include 'includes/alerts.html' %}
             <header class="mb-4"><h4 class="card-title text-white">Sign up</h4></header>
-            <form action="{% url 'register'%}" method="post">
+            <form action="{% url 'register'%}" method="post" id="form">
                 {% csrf_token %}
 
                     <div class="form-row">
@@ -56,6 +63,23 @@
     
     
     </section>
+
+
+    <script> jQuery('#form').validate({
+        rules: {
+          first_name: 'required',
+          email: 'required',
+          number: 'required',
+          password: 'required',
+        }, messages: {
+          first_name: 'Please enter valid name',
+          last_name: 'Please enter a valid Last Name',
+          email : 'Enter a Valid Email',
+        }, submitHandler: function (form) {
+          form.submit();
+        }
+      })
+    </script>
 
 {% endblock content %}
 

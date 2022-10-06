@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container mt-5 " style="">
+    <div class="row">
+        <div class="card mx-auto" style="background-color: skyblue; ">
+        <div class="mx-auto col-lg-11 mt-5"> 
+        
+            <div class="checkout__order">
+                
+                <div class="checkout__order__product">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+
+                           
+                            <h3>Recept</h3>
+                        </li>{% for item in cart_items %}
+                        <li class="list-group-item">Amount without Tax:₹ {{item.sub_total}}</span></li>
+                        {% endfor %}
+                        <li class="list-group-item">Amount including 2% tax : <span>₹ {{grand_total}}</span></li>
+                    </ul>
+                </div>
+                <div class="checkout__order__total">
+                   
+                </div>
+
+            
+                {% if paym %}
+                <form action="{% url 'payment_status' %}" method="POST">
+                    <div class="form-check ">
+                        <label class="form-check-label text-white" for="check1">
+                          <span><input type="checkbox" class="form-check-input text-white" id="check1" name="option1" value="something"  required>I agree to RazorPay <a href="https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiylvrk5sD4AhUVNaYKHTa4CGYQFnoECAQQAQ&url=https%3A%2F%2Frazorpay.com%2Fterms%2F&usg=AOvVaw2ndzd4rd0amlKDnKbAubW6">Terms and Conditions</a> </span> 
+                        </label>
+                      </div>
+                      <br>
+                      <p>{{razorpay_order_id}}</p>
+                  
+                      <button class="btn btn-info btn-block m-3" id="rzp-button1">Pay Using Razor Pay</button>
+                      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+                      <script>
+                        
+                      var options = {
+                          "key": "rzp_test_Nf4iy5nJpLvtmt",
+                          "amount": "{{response_payment.amount}}",
+                          "currency": "INR",
+                          "name": "Acme Corp",
+                          "description": "Test Transaction",
+                          "image": "https://example.com/your_logo",
+                          "order_id": "{{response_payment.id}}",
+                          "callback_url": "{% url 'payment_status' %}",
+                          "prefill": {
+                              "name": "Bibin",
+                              "email": "bibin6724@gmail.com",
+                              "contact": "9999999999"
+                          },
+                          "notes": {
+                              "address": "Razorpay Corporate Office"
+                          },
+                          "theme": {
+                              "color": "#3399cc"
+                          }
+                      };
+                      var rzp1 = new Razorpay(options);
+                      document.getElementById('rzp-button1').onclick = function(e){
+                          rzp1.open();
+                          e.preventDefault();
+                      }
+                      </script>
+                                      {% endif %}
+            </div>
+        </div>
+        </form>
+        </div> 
+       
+
+
+    </div>
+
+
+</div>
+</div>
+
+{% endblock %}

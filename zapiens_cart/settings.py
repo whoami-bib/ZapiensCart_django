@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from ctypes import cast
+from email.policy import default
 from pathlib import Path
-
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-r56v7+*xq%%ia8m8osn)ndiv-%n$400kwj8lqx-f%_!**_(n$@'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG',default=True,cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['zapiens-cart-site-env.eba-bpjkcwja.us-west-2.elasticbeanstalk.com']
 
 
 # Application definition
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     'carts',
     'admins',
     'orders',
+    'wishlists',
     
 ]
 
@@ -140,17 +143,23 @@ MESSAGE_TAGS = {
 }   
 
 # smtp configuration
-EMAIL_USE_TLS = True  
-EMAIL_HOST = 'smtp.gmail.com'  
-EMAIL_PORT = 587  
-EMAIL_HOST_USER = 'bibin6724@gmail.com'  
-EMAIL_HOST_PASSWORD = 'vczkraftwtvuezea'  
+EMAIL_USE_TLS = config('EMAIL_USE_TLS',cast=bool)  
+EMAIL_HOST = config('EMAIL_HOST')  
+EMAIL_PORT = config('EMAIL_PORT',cast=int)  
+EMAIL_HOST_USER =config ('EMAIL_HOST_USER')  
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-TWILIO_VERIFY_SERVICE_SID= 'VA88313bfd03b0f50cd6b5dc7e096bd883'
-TWILIO_ACCOUNT_SID= 'AC31562035eba41a95f754146956c1e531'
-TWILIO_AUTH_TOKEN= '77cba447ac065184afa003ff8e7bda64'
+TWILIO_VERIFY_SERVICE_SID= config('TWILIO_VERIFY_SERVICE_SID')
+TWILIO_ACCOUNT_SID= config('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN= config('TWILIO_AUTH_TOKEN')
+
+
+# razor pay payment integration
+
+RAZORPAY_ID    =   config('RAZORPAY_ID')
+RAZORPAY_KEY   =   config('RAZORPAY_KEY')

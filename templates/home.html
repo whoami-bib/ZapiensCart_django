@@ -27,10 +27,14 @@
 	{% for product in products %}
 	<div class="col-md-3">
 		<div class="card card-product-grid">
-			<a href="{{product.get_url}}" class="img-wrap"> <img src="{{product.image.url}}"> </a>
+			<a href="{% url 'product_detail' product.category.slug product.slug  %}" class="img-wrap"> <img src="{{product.image.url}}"> </a>
 			<figcaption class="info-wrap">
 				<a href="{{product.get_url}}" class="title">{{product.product_name}}</a>
-				<div class="price mt-1">₹{{product.price}}</div> <!-- price-wrap.// -->
+				<div class="price mt-1">₹{{product.offer}}</div> <!-- price-wrap.// -->
+				<span class="d-flex">
+					<strike class="d-flex"><p>₹{{product.price}} </p></strike> 
+					<span class="ml-2"> {{ product.category.offer}}%off </span> 
+				</span>
 			</figcaption>
 		</div>
 	</div>
@@ -39,7 +43,33 @@
 </div> <!-- row.// -->
 
 </div><!-- container // -->
+
 </section>
+<nav class="mt-4" aria-label="Page navigation sample" style="display: flex;justify-content: center;">
+	{% if products.has_other_pages %}
+	  <ul class="pagination">
+			{% if products.has_previous %}
+	    <li class="page-item"><a class="page-link" href="?page={{products.previous_page_number}}">Previous</a></li>
+			{% else %}
+			<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+			{% endif %}
+
+			{% for i in products.paginator.page_range %}
+				{% if products.number == i %}
+	    		<li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+				{% else %}
+					<li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+				{% endif %}
+	    {% endfor %}
+
+			{% if products.has_next %}
+	    	<li class="page-item"><a class="page-link" href="?page={{products.next_page_number}}">Next</a></li>
+			{% else %}
+				<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+			{% endif %}
+	  </ul>
+	{% endif %}
+</nav>
 <!-- ========================= SECTION  END// ========================= -->
 
 </body>

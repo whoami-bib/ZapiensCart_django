@@ -1,8 +1,11 @@
 
-from django.shortcuts import render,redirect
+from multiprocessing import context
+from django.shortcuts import render,redirect,get_object_or_404
 
-from .models import Account
-from .forms import RegistrationForm,VerifyForm, VerifyotpForm, otploginForm
+from orders.models import OrderProduct
+
+from .models import Account, UserProfile
+from .forms import RegistrationForm,VerifyForm, VerifyotpForm, otploginForm,UserForm,UserProfileForm
 from django.contrib import messages,auth
 from django.contrib.auth.decorators import login_required
 #email varification
@@ -11,13 +14,14 @@ from django.template.loader import render_to_string
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 from django.views.decorators.cache import never_cache
-#phone number verification
 from . import verify
 from .verify import send,check
 from carts.views import _cart_id
 from carts.models import Cart,CartItem
+from orders.models import Order
 
 import requests
+
 
 
 # Create your views here.
@@ -92,44 +96,6 @@ def verify_code(request):
         form = VerifyForm()
     return render(request, 'accounts/verify.html', {'form': form})
 
-# def register(request):
-#     if request.method == 'POST':
-#         form = RegistrationForm(request.POST)
-#         if form.is_valid():
-#             first_name = form.cleaned_data['first_name']
-#             last_name = form.cleaned_data['last_name']
-#             phone_number = form.cleaned_data['phone_number']
-#             email = form.cleaned_data['email']
-#             password = form.cleaned_data['password']
-#             username=email.split("@")[0]
-            
-#             user = Account.objects.create_user(first_name=first_name,last_name=last_name,email=email,username=username,password=password)
-#             user.phone_number =phone_number
-#             user.save()
-#             request.session['phone_number']=phone_number
-            
-#             #user Authentication
-
-#             current_site=get_current_site(request)
-#             mail_subject='Pleases Activate your Account'
-#             message = render_to_string('accounts/account_verification_email.html',{
-#                 'user'  : user,
-#                 'domain': current_site,
-#                 'uid'   : (user.pk),
-#                 'token' : default_token_generator.make_token(user),
-#             })
-#             to_email=email
-#             send_email=EmailMessage(mail_subject,message,to=[to_email])
-#             send_email.send()
-#             # messages.success(request,"thank u for registering with us we have sent an email to your account please verify it")
-#             return redirect('/accounts/login/?command=verification&email='+email)
-
-#     else:
-#         form=RegistrationForm()
-#     context={
-#         'form':form
-#     }
-#     return render(request,'accounts/register.html',context)
 @never_cache
 def login(request):
     if request.user.is_authenticated:
@@ -209,17 +175,6 @@ def otplogin(request):
                 messages.error(request,"Account Doesnot exist!")
         else:
             messages.error(request,"Enter a Valid Phone Number!")
-                
-
-        # if user is not None:
-        #         auth.login(request,user)
-        #         messages.success(request,'you are now logged in')
-        #         return redirect('home')
-        # else:
-        #     messages.error(request,'Invalid credentials')
-        #     return redirect('login')
-       
-        
     return render(request,'accounts/otp_login.html')
     
 
@@ -250,5 +205,91 @@ def activate(request,uidb64,token):
 
 @login_required(login_url='login')
 def dashboard(request):
-    return render(request,'accounts/dashboard.html')
+    orders=Order.objects.order_by("-created_at").filter(user_id=request.user.id,is_ordered=True)
+    orders_count=orders.count
+    userprofile = UserProfile.objects.filter(user_id=request.user.id)
+    context={
+        'orders_count':orders_count,
+        'userprofile' : userprofile,
+    }
+    return render(request,'accounts/dashboard.html',context)
+
+# add address
+def add_address(request):
+    if request.method =="POST":
+        user=request.user
+        first_name=request.POST['first_name']
+        last_name=request.POST['last_name']
+        phone_number=request.POST['phone_number']
+        address_line_1=request.POST['address_line_1']
+        address_line_2=request.POST['address_line_2']
+        city = request.POST['city']
+        state=request.POST['state']
+        country=request.POST['country']
+        pincode=request.POST['pincode']
+        ins=UserProfile(user=request.user, address_line_1=address_line_1, 
+        address_line_2=address_line_2, city=city, state=state, country=country, pincode=pincode)
+        ins.save()
+
+    return render(request,'orders/add_address.html')
+# add address ends here
     
+def edit_profile(request):
+    print("______________________________________")
+    
+    userprofile = UserProfile.objects.get(user=request.user.id)
+       
+    if request.method == "POST":
+        user_form = UserForm(request.POST,instance=request.user)
+        profile_form = UserProfileForm(request.POST,request.FILES,instance=userprofile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request,'Your profile Updated.')
+            return redirect('edit_profile')
+    else:
+        user_form=UserForm(instance=request.user)
+        profile_form = UserProfileForm(instance=userprofile)
+    context = {
+        'user_form' : user_form,
+        'profile_form' : profile_form,
+        "userprofile"   : userprofile,
+    }
+    return render(request,'accounts/edit_profile.html',context)
+# Change Password View
+@login_required(login_url='login')
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST['current_password']
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+
+        user = Account.objects.get(username__exact=request.user.username)
+        if new_password == confirm_password:
+            success = user.check_password(current_password)
+            if success:
+                user.set_password(new_password)
+                user.save()
+                messages.success(request,"Password Changed Successfully")
+                return redirect ('change_password')
+            else:
+                messages.error(request,"Wrong Password")
+                return redirect ('change_password')
+        else:
+            messages.error(request,"Passwords donot Match")
+            return redirect ('change_password')
+    return render(request,'accounts/change_password.html')
+login_required(login_url='login')
+def order_detail(request,order_id):
+    order_detail = OrderProduct.objects.filter(order__order_number = order_id)
+    order = Order.objects.get(order_number = order_id)
+    subtotal = 0
+    for i in order_detail:
+        subtotal += i.product_price * i.quantity
+    context = {
+        'order_detail': order_detail,
+        'order' : order,
+        'subtotal':subtotal,
+    }
+    # __order_number means this order's order number
+    return render(request,'accounts/order_detail.html',context)

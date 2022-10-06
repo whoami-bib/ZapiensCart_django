@@ -4,15 +4,15 @@
 {% block content %}
 
 
-<section class="section-content padding-y bg">
+<section class="section-content padding-y bg " style="min-height: 50vh;">
     <div class="container">
     
     <!-- ============================ COMPONENT 1 ================================= -->
     {% if not cart_items %}
 
    
-        <h2 class="text-info text-center">Your cart is empty</h2>
-        <a href="{% url 'home' %}" class="btn btn-primary ">Continue Shopping</a>
+        <h2 class="text-info text-center">Your cart is empty😒</h2>
+        <a href="{% url 'home' %}" class="btn btn-primary " style="margin-left: 40%; margin-top:100px ">Continue Shopping</a>
     
     
 

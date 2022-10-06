@@ -26,5 +26,13 @@ urlpatterns = [
 
     path('manage_order/',views.manage_order,name='manage_order'),
     path('edit_order/<int:id>/',views.edit_order,name='edit_order'),
+
+
+    path('manage_discount/',views.manage_discount,name='manage_discount'),
+    path('add_discount/',views.add_discount,name='add_discount'),
+    path('edit_discount/<int:id>/',views.edit_discount,name='edit_discount'),
+    path('delete_discount/<int:id>/',views.delete_discount,name='delete_discount'),
+
+    path('sales_report/',views.sales_report,name='sales_report'),
     
 ]
