@@ -83,7 +83,7 @@ def payment_status(request):
     }
     
 
-    #create client instance
+    #create client instances
     client = razorpay.Client(auth=("rzp_test_Nf4iy5nJpLvtmt" , "Y2D6cZPsAz452WAVT8VpDTM1" ))
 
     try:
