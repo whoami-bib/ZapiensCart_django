@@ -85,7 +85,7 @@ class OrderProduct(models.Model):
 class Coupons(models.Model):
     coupon_name = models.CharField(max_length=250)
     coupon_code = models.CharField(max_length=50)
-    coupon_offer = models.IntegerField(max_length=3)
-    coupon_min = models.IntegerField(max_length=50)
+    coupon_offer = models.IntegerField()
+    coupon_min = models.IntegerField()
     coupon_start = models.DateTimeField(default=None)
     coupon_end = models.DateTimeField(default=None)
