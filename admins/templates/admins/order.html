@@ -17,9 +17,8 @@
                     <div>
                   <h4 class="card-title">Orders</h4>
                   
-                  <!-- <p class="card-description">
-                    Add class <code>.table-striped</code>
-                  </p> -->
+                
+                  </p> 
                   <div class="table-responsive">
                     <table class="table table-striped mt-5">
                       <thead >
@@ -30,12 +29,7 @@
                           <th>
                             Order number
                            </th>
-                           {% comment %} <th>
-                            Order products
-                           </th> {% endcomment %}
-                           <!-- <th>
-                           Quantity
-                           </th> -->
+                         
                           <th>
                            Address
                           </th> 
@@ -69,17 +63,7 @@
                            {{ x.order_number }}
                           </td>
                            
-                          {% comment %} <td> {% for y in order_product %}
-                            {% if y.order.pk == x.pk %} *
-                            {{ y.product }} (id={{y.id}}) X {{ y.quantity }} <br>{% endif %} 
-                            {% endfor %}
-                           </td>
-                           <td>   {% for y in order_product %}
-                            {% if y.order.pk == x.pk %}
-                            {{ y.quantity }}   {% endif %} 
-                            {% endfor %}
-                           </td>
-                          {% endcomment %}
+                        
                           <td>
                           
                             {{x.address_line_1 | capfirst }}, <br> {{ x.address_line_2 | capfirst}},

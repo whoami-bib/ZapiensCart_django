@@ -11,7 +11,7 @@
                 <h4 class="card-title">Change Status</h4>
                 <!-- <p class="card-description">
                 Basic form layout
-                </p> -->{% if not order.status == "Cancelled" %}
+                </p> -->{% if not order.status == "Cancelled" and not order.status == "Delivered" %}
                 <form action="" class="forms-sample" method="POST">
                     {% csrf_token %}
                    

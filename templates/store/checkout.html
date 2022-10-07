@@ -27,10 +27,11 @@
                     
                     <input required type="radio" class="float-right"  name="address" value="{{ i.id }}" id="">
                     <label class="form-group float-right" for="">{{i.user.first_name }} {{i.user.last_name }} <br> {{i.address_line_1}} <br> {{i.address_line_2}} <br> {{i.city}} ,{{i.state}} ,{{i.country}} <br> {{i.pincode}}</label><br>
-                    <a  href="{% url 'add_address' %}" class="btn btn-primary p-3">Add Address</a>
+                    
                     
                    
                     {% endfor %}
+                    <a  href="{% url 'add_address' %}" class="btn btn-primary p-3">Add Address</a>
                 </div>
                 
   
