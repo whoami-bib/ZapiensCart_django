@@ -1,7 +1,4 @@
 
-from multiprocessing import context
-from sre_constants import CATEGORY
-from tkinter import E
 from django.shortcuts import render,get_object_or_404
 from store.models import Product
 from category.models import Category

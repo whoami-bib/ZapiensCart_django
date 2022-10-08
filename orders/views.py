@@ -1,11 +1,6 @@
-import carts
-from calendar import c
+
 import datetime
-from itertools import product
-from locale import currency
 from multiprocessing import context
-from turtle import st
-from urllib import request
 from django.shortcuts import render,redirect
 from carts.models import CartItem
 from store.models import Product
@@ -64,14 +59,15 @@ def payment(request,total=0,quantity=0):
         paym.save()
         user = Payment.objects.filter(order_id=order_id).values('user','order_id')
         paisa=int(request.session['grand_total'])*100
-        return render(request,'orders/razor.html',context={'response_payment':response_payment,'user':request.user,
+        return render(request,'orders/razor.html',
+        context={'response_payment':response_payment,'user':request.user,
         'paym' : response_payment,
         'cart_items' : cart_items, 
         'tax' : tax,
         'grand_total':request.session['grand_total'],
         'total' : int(request.session['grand_total']),
         'paisa' :paisa
-})
+        })
     
     return render(request, 'orders/razor.html',context) 
 @csrf_exempt

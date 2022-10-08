@@ -1,5 +1,4 @@
 
-from multiprocessing.sharedctypes import Value
 from django.shortcuts import render,redirect
 from store.models import Product,Variation
 from orders.models import Order
