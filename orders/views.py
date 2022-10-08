@@ -24,6 +24,7 @@ import razorpay
 import json
 import urllib
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.datastructures import MultiValueDictKeyError
 
 # Create your views here.
 def payment(request,total=0,quantity=0):
@@ -252,6 +253,11 @@ def place_order(request,total=0,quantity=0):
     
 
     if request.method =='POST':
+        try:
+            address = request.POST['address']
+        except MultiValueDictKeyError:
+            messages.error(request, 'Please Select an Address!')
+            return redirect('checkout')
         # coupon
         if 'coupon' in request.POST:
                 code = request.POST['code']
@@ -268,7 +274,6 @@ def place_order(request,total=0,quantity=0):
                 return redirect(place_order)
         add = request.POST['address']
         user = UserProfile.objects.get(id=add)
-        
         data                =   Order(user=request.user,first_name=user.user.first_name,last_name=user.user.last_name,email=user.user.email,phone=user.user.phone_number,address_line_1=user.address_line_1,address_line_2=user.address_line_2,
         country=user.country,state=user.state,city=user.city,pincode=user.pincode,order_total=grand_total,tax=tax)
         data.save()

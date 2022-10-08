@@ -84,7 +84,7 @@ def manage_user(request):
                 "is_active":single_product.is_active,
                 })
 
-        paginator = Paginator(product1, 1)
+        paginator = Paginator(product1, 10)
         page = request.GET.get('page')
         paged_products = paginator.get_page(page)
     context = {
