@@ -10,6 +10,10 @@ from .models import Cart,CartItem
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+
+from django.views.decorators.csrf import csrf_exempt
+
 # Create your views here.
 def _cart_id(request):
     cart=request.session.session_key
@@ -228,4 +232,39 @@ def checkout(request,total=0,quantity=0,cart_item=None):
 def cancel_order(request,id):
     Order.objects.filter(id=id).update(status="Cancelled")
     return redirect(my_orders)
+# @csrf_exempt
+# def decreaseQuantity(request):
+#     if request.user.is_authenticated and request.user.is_active:
+        
+#         print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+#         if request.method =="POST":
+#             id = request.POST['id']
+#             print(id)
+#             ob=CartItem.objects.values('quantity').get(id=id)
 
+#             CartItem.objects.filter(id=id).update(quantity=ob['quantity']-1)
+#             ob=CartItem.objects.values('quantity').get(id=id)
+#             print(ob['quantity'])
+#             q =ob['quantity']
+#             return JsonResponse({'q':q})
+# @csrf_exempt
+# def increaseQuantity(request):
+
+#     if request.user.is_authenticated and request.user.is_active:
+#         tax=0
+#         grand_total=0
+#         cart_items=0
+#         cart_items = CartItem.objects.filter(user=request.user,is_active=True)
+#         if request.method =="POST":
+#             id = request.POST['id']
+#             ob=CartItem.objects.values('quantity').get(id=id)
+
+#             CartItem.objects.filter(id=id).update(quantity=ob['quantity']+1)
+#             ob=CartItem.objects.values('quantity').get(id=id)
+#             q =ob['quantity']
+#             for cart_item in cart_items:
+#                 total+=((cart_item.product.price-(cart_item.product.category.offer *cart_item.product.price)/100)*cart_item.quantity)
+#                 quantity+=cart_item.quantity
+#             tax=(2 * total)/100
+#             grand_total=total + tax
+#             return JsonResponse({'grand_total':grand_total,'q':q})

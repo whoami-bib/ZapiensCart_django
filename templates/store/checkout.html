@@ -101,8 +101,9 @@
             
                     <input type="text" class="form-control coupon " name="code"  />
                           {% endif %}
+                    {% if not request.session.coupon_code %}   
                     <button type="submit" class="btn btn-primary btn-apply coupon mt-2 mb-4" name="coupon" >Apply</button>
-                
+                    {% endif %}
                 <button type="submit" name="submit" class="btn btn-primary btn-block">Place Order </button>
                 <a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>
             </div> <!-- card-body.// -->

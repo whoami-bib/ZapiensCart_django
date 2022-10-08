@@ -51,19 +51,24 @@
             <!-- col.// -->
                         <div class="col"> 
                             <div class="input-group input-spinner">
+                                {% comment %} <div class="input-group-prepend"><button type="button" class="form-control" id="increment{{cart_item.id}}" onclick="decreaseQuantity({{cart_item.id }},-1)"><i class="fa fa-minus"></i></button></div> {% endcomment %}
                                 <div class="input-group-prepend">
                                 <a href="{% url 'remove_cart' cart_item.product.id cart_item.id %}" class="btn btn-light" type="button" id="button-plus"> <i class="fa fa-minus"></i> </a>
-                                </div>
-                                <input type="text" class="form-control"  value="{{cart_item.quantity}}">
+                                </div> 
+                                <input type="text" class="form-control"  value="{{cart_item.quantity}}"> 
+                                {% comment %} <span class="form-control" id="{{cart_item.id}}">{{cart_item.quantity}}</span>{% endcomment %}
+                                
                                 <div class="input-group-append">
-                            <form action="{% url 'add_cart' cart_item.product.id %}" method="POST">
+                                {% comment %} <div class="input-group-prepend"><button type="button" class="form-control" id="increment" onclick="decreaseQuantity({{cart_item.id }},1)"><i class="fa fa-plus"></i></button></div> {% endcomment %}
+                                
+                             <form action="{% url 'add_cart' cart_item.product.id %}" method="POST">
                                 {% csrf_token %}
                                 {% for item in cart_item.variations.all %}
                                 <input type="hidden" name="{{item.variation_category | lower}}" value="{{item.variation_value | capfirst}}">
                                 
                                 {% endfor %}
                                 <button  class="btn btn-light" type="submit" id="button-minus"> <i class="fa fa-plus"></i> </button>
-                            </form>
+                            </form> 
                             </div>
                             </div> <!-- input-group.// -->
                         </div> <!-- col.// -->
@@ -99,7 +104,7 @@
                 </dl>
                 <dl class="dlist-align">
                   <dt>Grand Total:</dt>
-                  <dd class="text-right text-dark b"><strong>₹{{grand_total}}</strong></dd>
+                  <dd id="grand" class="text-right text-dark b"><strong>₹{{grand_total}}</strong></dd>
                 </dl>
                 <hr>
                 <p class="text-center mb-3">
@@ -117,8 +122,81 @@
     {% endif %}
     <!-- ============================ COMPONENT 1 END .// ================================= -->
     
-    </div> <!-- container .//  -->
+    </div> 
+    <!-- container .//  -->
+    {% comment %} <style>
+        .disabled{
+            pointer-events: none;
+            background: rgba(0, 7, 90, .23);
+        }
+    </style> {% endcomment %}
     </section>
+    {% comment %} <script>
+   
+        function decreaseQuantity(id,count){
+        var sumith = document.getElementById(id)
+        var decrement='increment'+id
+        var btn = document.getElementById(decrement)
+          
+          console.log(id)
+          if (count==-1){
+            $.ajax({
+                headers: {
+                  "X-CSRFToken": $('[name=csrfmiddlewaretoken]').val()
+        
+                },
+                type : "POST",
+                url : "{% url 'decreaseQuantity' %}",
+        
+                data : {
+                  
+                  id : id
+        
+        
+                },
+                success: function(response){
+                  quan = response.q
+                  document.getElementById(id).innerHTML=quan
+                  if(quan ==1){
+                    btn.classList.add('disabled')
+                  }
+                  else{
+                    btn.classList.remove('disabled')
+                  }
+                }
+              })
+            
+          }
+          else{
+            $.ajax({
+                headers: {
+                  "X-CSRFToken": $('[name=csrfmiddlewaretoken]').val()
+        
+                },
+                type : "POST",
+                url : "{% url 'increaseQuantity' %}",
+        
+                data : {
+                  
+                  id : id
+        
+        
+                },
+                success: function(response){
+                  quan = response.q
+                  
+                  document.getElementById(id).innerHTML=quan
+                  document.getElementById('grand').innerHTML=response.grand_total
+                  console.log(quan)
+                }
+              })
+          }
+         
+          
+          
+        }
+        
+      </script> {% endcomment %}
 
 {% endblock content %}
 

@@ -110,7 +110,7 @@ def payment_status(request):
             data.user_id = request.user.id
             data.product_id = x.product_id
             data.quantity = x.quantity
-            data.payement = payment          
+            data.payment = payment          
             data.product_price = x.product.price
             data.ordered = True
          

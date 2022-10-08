@@ -15,6 +15,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth import authenticate
 from django.utils import timezone
 import datetime
+from django.core.paginator import Paginator
 
 
 # Create your views here.
@@ -45,7 +46,21 @@ def manage_user(request):
     if 'q' in request.GET:
         q = request.GET['q']
         if q:
-            users = Account.objects.order_by('-id').filter(Q(first_name__icontains=q) | Q(last_name__icontains=q) |  Q(email__icontains=q) )   
+            users = Account.objects.order_by('-id').filter(Q(first_name__icontains=q) | Q(last_name__icontains=q) |  Q(email__icontains=q) )
+            for single_product in users:
+                product1=[]
+            for single_product in users:
+                product1.append({
+                    "first_name":single_product.first_name,
+                    "last_name" :single_product.last_name,
+                    "username"  :single_product.username,
+                    "email"     :single_product.email,
+                    "phone_number":single_product.phone_number,
+                    "date_joined":single_product.date_joined,
+                    "last_login":single_product.last_login,
+                    "is_active":single_product.is_active,
+
+                }) 
             # users_count = users.count()
             if not users.exists():
                 messages.error(request, 'No Matching Datas')
@@ -54,8 +69,26 @@ def manage_user(request):
             return redirect('manage_user')
     else:
         users = Account.objects.filter(is_superadmin=False).order_by('-id')
+        for single_product in users:
+                product1=[]
+        for single_product in users:
+            product1.append({
+                "id"        :single_product.id,
+                "first_name":single_product.first_name,
+                "last_name" :single_product.last_name,
+                "username"  :single_product.username,
+                "email"     :single_product.email,
+                "phone_number":single_product.phone_number,
+                "date_joined":single_product.date_joined,
+                "last_login":single_product.last_login,
+                "is_active":single_product.is_active,
+                })
+
+        paginator = Paginator(product1, 1)
+        page = request.GET.get('page')
+        paged_products = paginator.get_page(page)
     context = {
-        'users' : users,
+        'users' : paged_products,
     }
     return render(request, 'admins/manage_user.html',context)
 
@@ -159,17 +192,58 @@ def manage_product(request):
         q = request.GET['q']
         if q:
             product = Product.objects.order_by('-id').filter(Q(category__title__icontains=q) | Q(subcategory__name__icontains=q) |Q(gender__icontains=q) | Q(brand__brand_name__icontains=q) |  Q(name__icontains=q))   
+            for single_product in product:
+                product1=[]
+        for single_product in product:
             
-            if not product.exists():
-                messages.error(request, 'No Matching Datas Found')
-                return render(request,'admins/product.html')
+            product1.append({
+                'id': single_product.id,
+                'product_name': single_product.product_name,  
+                'slug': single_product.slug,         
+                'descrbtion' :single_product.descrbtion,    
+                'price'  : single_product.price,       
+                'image'  :single_product.image,       
+                'stock'  : single_product.stock,       
+                'is_available' : single_product.is_available, 
+                'category'   :single_product.category,   
+                'created_date' :single_product.created_date, 
+                'modified_date':single_product.modified_date,
+                'offer': (single_product.price-(single_product.category.offer * single_product.price)/100),
+                 })
+        paginator = Paginator(product1, 8)
+        page = request.GET.get('page')
+        paged_products = paginator.get_page(page)
+        if not product.exists():
+            messages.error(request, 'No Matching Datas Found')
+            return render(request,'admins/product.html')
         else:           
             return redirect('manage_product')
     else:
         product = Product.objects.all().order_by('-id')
+        for single_product in product:
+                product1=[]
+        for single_product in product:
+            
+            product1.append({
+                'id': single_product.id,
+                'product_name': single_product.product_name,  
+                'slug': single_product.slug,         
+                'descrbtion' :single_product.descrbtion,    
+                'price'  : single_product.price,       
+                'image'  :single_product.image,       
+                'stock'  : single_product.stock,       
+                'is_available' : single_product.is_available, 
+                'category'   :single_product.category,   
+                'created_date' :single_product.created_date, 
+                'modified_date':single_product.modified_date,
+                'offer': (single_product.price-(single_product.category.offer * single_product.price)/100),
+                 })
+        paginator = Paginator(product1, 8)
+        page = request.GET.get('page')
+        paged_products = paginator.get_page(page)
 
     context = {
-        'product' : product,
+        'product' : paged_products,
     }
     return render(request, 'admins/product.html',context)
 
