@@ -50,6 +50,7 @@ def manage_user(request):
                 product1=[]
             for single_product in users:
                 product1.append({
+                    "id"        :single_product.id,
                     "first_name":single_product.first_name,
                     "last_name" :single_product.last_name,
                     "username"  :single_product.username,
@@ -59,13 +60,19 @@ def manage_user(request):
                     "last_login":single_product.last_login,
                     "is_active":single_product.is_active,
 
-                }) 
+                })
+            paginator = Paginator(product1, 10)                
+            page = request.GET.get('page')
+            paged_products = paginator.get_page(page)
+            context = {
+            'users' : paged_products,
+            } 
             # users_count = users.count()
             if not users.exists():
                 messages.error(request, 'No Matching Datas')
                 return render(request,'admins/manage_user.html')
         else:           
-            return redirect('manage_user')
+            return redirect('manage_user',context)
     else:
         users = Account.objects.filter(is_superadmin=False).order_by('-id')
         for single_product in users:

@@ -3,6 +3,8 @@ from django.shortcuts import render,redirect,get_object_or_404
 
 from store.models import Product,Variation
 from .models import Wishlist,WishlistItem
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 def _wishlist_id(request):
@@ -10,7 +12,7 @@ def _wishlist_id(request):
     if not wishlist:
         wishlist=request.session.create()
     return wishlist
-
+@login_required(login_url = 'login')
 def wishlist(request):     
     
     wishlist_items=WishlistItem.objects.filter(user=request.user)   

@@ -152,12 +152,16 @@
                          Payment Id
                         </th>
                         
+                        
                         <th>
                           Product
                         </th>
                         <th>
                           Date
                         </th>
+                        <th>
+                          Amount Paid
+                         </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -180,15 +184,23 @@
                         <td>
                          {{ x.created_at }}
                         </td>
+                        <td>
+                          {% if x.payment.payment_id %}
+                          {{ x.payment.amount_paid }}
+                          {% else %}
+                          Pending
+                          {% endif %}
+                         </td>
                       </tr>
                      {% endfor %}
                   
                     </tbody>
                     <tfoot>
-                      <th>search User</th>
-                      <th>Search Payment</th>
-                      <th>Search Product</th>
-                      <th>Search by Date</th>
+                      <th> User</th>
+                      <th> Payment</th>
+                      <th> Product</th>
+                      <th>by month and year</th>
+                      <th>Amount</th>
                     </tfoot>
                   </table>
                 </div>
